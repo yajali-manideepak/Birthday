@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #050508;
+  color: #f3f4f6;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  overflow-x: hidden;
+}
+
+/* Custom Luxury Gold Text & Gradients */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #fbf5b7 0%, #d4af37 35%, #f7e682 60%, #aa771c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-metallic-text {
+  background: linear-gradient(
+    90deg,
+    #cf9d34 0%,
+    #fefcdb 25%,
+    #d4af37 50%,
+    #fff8cc 75%,
+    #a2701a 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 6s linear infinite;
+  text-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* Gold Glowing Borders */
+.gold-border-glow {
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.15), inset 0 0 15px rgba(212, 175, 55, 0.08);
+}
+
+.gold-border-glow:hover {
+  border-color: rgba(245, 222, 76, 0.7);
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.35), inset 0 0 20px rgba(212, 175, 55, 0.15);
+}
+
+/* Glassmorphism Luxury Container */
+.glass-luxury {
+  background: rgba(14, 14, 20, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+}
+
+.glass-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(20, 20, 28, 0.7) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+/* Luxury Button */
+.btn-gold {
+  background: linear-gradient(135deg, #d4af37 0%, #aa771c 100%);
+  color: #08080c;
+  font-weight: 600;
+  box-shadow: 0 4px 25px rgba(212, 175, 55, 0.35);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-gold:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 35px rgba(212, 175, 55, 0.55);
+  background: linear-gradient(135deg, #faef82 0%, #d4af37 100%);
+}
+
+.btn-gold-outline {
+  background: transparent;
+  border: 1px solid rgba(212, 175, 55, 0.6);
+  color: #fbf5b7;
+  transition: all 0.3s ease;
+}
+
+.btn-gold-outline:hover {
+  background: rgba(212, 175, 55, 0.12);
+  border-color: #faef82;
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.3);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #060609;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2517;
+  border-radius: 4px;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #aa771c;
+}
+
+/* Preserve original black and white */
+.bw-authentic {
+  filter: grayscale(100%) contrast(108%);
+  transition: transform 0.5s ease;
+}
+
+.bw-authentic:hover {
+  filter: grayscale(100%) contrast(115%);
+}
