@@ -127,3 +127,14 @@ body {
 .bw-authentic:hover {
   filter: grayscale(100%) contrast(115%);
 }
+
+/* Shake Animation for Input Feedback */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  15%, 45%, 75% { transform: translateX(-7px); }
+  30%, 60%, 90% { transform: translateX(7px); }
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}

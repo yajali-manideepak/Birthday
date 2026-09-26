@@ -56,11 +56,12 @@ export const SecretLock: React.FC<SecretLockProps> = ({ onUnlock, isUnlocked }) 
       }, 500);
     } else {
       setError(true);
-      setErrorMessage('Incorrect code. Please enter the correct passcode.');
-      // Shake feedback, clear pin after delay
+      setErrorMessage('Incorrect passcode. Please try again! (Hint: 301206)');
+      // Brief feedback, clear pin and stop error state so it doesn't get stuck
       setTimeout(() => {
         setPin('');
-      }, 800);
+        setError(false);
+      }, 700);
     }
   };
 
@@ -101,7 +102,7 @@ export const SecretLock: React.FC<SecretLockProps> = ({ onUnlock, isUnlocked }) 
     <div className="my-8 max-w-md w-full mx-auto px-4 z-20">
       <div
         className={`glass-luxury rounded-3xl p-6 sm:p-8 gold-border-glow shadow-2xl transition-all duration-300 ${
-          error ? 'border-red-500/80 shadow-[0_0_30px_rgba(239,68,68,0.4)] animate-bounce' : ''
+          error ? 'border-red-500/80 shadow-[0_0_30px_rgba(239,68,68,0.4)] animate-shake' : ''
         }`}
       >
         {/* Header Icon */}

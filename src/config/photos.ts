@@ -84,13 +84,12 @@ export const PRESENTS_DATA: PresentItem[] = [
     id: 'present-bracelet',
     category: 'bracelet',
     title: 'The Best Friend Charm Bracelet',
-    subtitle: '"Your male bestfriend has to gift this to you 💕🎀✨"',
+    subtitle: '"I will give this to you when I meet you in offline 💕🎀✨"',
     tag: 'Gift 01 • Promised Surprise',
     badge: 'Special Gift 🎀',
-    quote: 'Your male bestfriend has to gift this to you 💕🎀✨',
-    description: 'You shared this sweet hint, and today that promise is celebrated! A handcrafted charm bracelet glistening with soft pink stars, lustrous pearls, wings, and delicate pink bows — crafted for the brightest star, Stella.',
+    quote: 'I will give you when I meet you in offline 💕🎀✨',
+    description: 'You shared this sweet hint, and today that promise is celebrated! A handcrafted charm bracelet glistening with soft pink stars, lustrous pearls, wings, and delicate pink bows — I will give this to you when I meet you in offline! 🎀✨',
     imageSrc: '/assets/presents/present.png',
-    secondaryImageSrc: '/assets/presents/bracelet-detail.jpg',
   },
   {
     id: 'present-nail',
@@ -125,20 +124,12 @@ export const MEMORIES_DATA: PhotoMemory[] = [
     tag: 'Memory 01',
     title: '12th Class',
     subtitle: 'Board Exam Preparation Days',
-    description: 'Those preparation days for our board exams...\nStudying together, preparing for exams, helping each other and sharing those little moments made those days special.',
-    imageSrc: '/assets/photos/memory-traditional.jpg', // Replace with /assets/photos/memory-school.jpg when ready
+    description: 'Those 12th class days...\nWe didn’t go to college at that time because of our board exam preparation — it was all online preparation, endless calls, and texting each other all day long, helping each other, studying together, and sharing every little moment.',
+    imageSrc: null,
   },
   {
     id: 'memory-02',
     tag: 'Memory 02',
-    title: 'The Mall Selfies',
-    subtitle: 'Unplanned Smiles',
-    description: 'Those random selfies in the mall...\nSimple moments, but somehow they became memories that I still remember with a smile.',
-    imageSrc: '/assets/photos/memory-selfie.jpg', // Replace with /assets/photos/memory-mall.jpg when ready
-  },
-  {
-    id: 'memory-03',
-    tag: 'Memory 03',
     title: 'College → Bus Stop Walk',
     subtitle: 'Walking, Laughing & Friends Bonding',
     description: 'Walking from college to the bus stop...\nTalking, laughing, teasing and enjoying those little moments together with friends.',
@@ -146,16 +137,16 @@ export const MEMORIES_DATA: PhotoMemory[] = [
     videoSrc: '/assets/videos/college-bus-memory.mp4',
   },
   {
-    id: 'memory-04',
-    tag: 'Memory 04',
+    id: 'memory-03',
+    tag: 'Memory 03',
     title: 'Bakery Moments',
     subtitle: 'Chatting, Eating & Pure Joy',
     description: 'Friends meeting, chatting, eating at the bakery and laughing about random things...\nThose simple moments were honestly some of the happiest ones.',
-    imageSrc: '/assets/photos/memory-party.jpg', // Replace with /assets/photos/memory-bakery.jpg when ready
+    imageSrc: '/assets/photos/memory-party.jpg',
   },
   {
-    id: 'memory-05',
-    tag: 'Memory 05',
+    id: 'memory-04',
+    tag: 'Memory 04',
     title: 'Those Calls & Chats',
     subtitle: 'Time Losing Meaning',
     description: 'Those endless calls and chats...\nI never really noticed how quickly time was passing whenever I was talking to you.',
@@ -163,12 +154,12 @@ export const MEMORIES_DATA: PhotoMemory[] = [
     isBlackAndWhite: true,
   },
   {
-    id: 'memory-06',
-    tag: 'Memory 06',
+    id: 'memory-05',
+    tag: 'Memory 05',
     title: 'Early Morning College',
     subtitle: 'Cool Breeze & Gentle Peace',
     description: 'Talking on calls in the cool breeze during those early mornings while coming to college...\nThose moments had a different kind of peace.',
-    imageSrc: '/assets/photos/memory-final.jpg', // Replace with /assets/photos/memory-college.jpg when ready
+    imageSrc: '/assets/photos/memory-final.jpg',
   },
 ];
 
@@ -191,26 +182,8 @@ export const GALLERY_PHOTOS: GalleryPhoto[] = [
   },
   {
     id: 'g-3',
-    title: 'Golden Glow',
-    caption: 'Dressed in traditional splendor, shining brighter than gold.',
-    src: '/assets/photos/memory-traditional.jpg',
-  },
-  {
-    id: 'g-4',
     title: 'Night of Lights',
     caption: 'Fairy lights and golden moments that will linger forever.',
     src: '/assets/photos/memory-party.jpg',
-  },
-  {
-    id: 'g-5',
-    title: 'The Sweetest Smile',
-    caption: 'Unfiltered happiness, warmth, and the joy you always bring.',
-    src: '/assets/photos/memory-selfie.jpg',
-  },
-  {
-    id: 'g-6',
-    title: 'Quiet Grace',
-    caption: 'Simply you — genuine, beautiful, and deeply special.',
-    src: '/assets/photos/memory-final.jpg',
   },
 ];

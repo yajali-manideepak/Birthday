@@ -136,31 +136,58 @@ export const PartyPoppers: React.FC = () => {
             }}
             className="absolute bottom-[-100px] pointer-events-auto cursor-pointer group hover:scale-110 transition-transform select-none"
           >
-            {/* Balloon body */}
+            {/* Realistic 3D Balloon Body */}
             <div
-              className="w-14 h-18 sm:w-16 sm:h-20 rounded-full relative flex items-center justify-center shadow-lg"
+              className="w-14 h-20 sm:w-16 sm:h-22 relative flex items-center justify-center filter drop-shadow-[0_12px_20px_rgba(0,0,0,0.5)]"
               style={{
-                backgroundColor: balloon.color,
-                boxShadow: `0 10px 25px ${balloon.color}66`,
+                borderRadius: '50% 50% 50% 50% / 40% 40% 60% 60%',
+                background: `radial-gradient(circle at 35% 28%, #ffffff 0%, ${balloon.color} 35%, rgba(0, 0, 0, 0.45) 100%)`,
+                boxShadow: `inset -4px -6px 12px rgba(0,0,0,0.35), inset 4px 6px 12px rgba(255,255,255,0.4), 0 10px 30px ${balloon.color}55`,
               }}
             >
-              {/* Highlight glare */}
-              <div className="absolute top-2 left-3 w-3 h-6 bg-white/40 rounded-full transform -rotate-25 blur-[0.5px]" />
+              {/* Primary Curved Specular Glare / Highlight */}
+              <div
+                className="absolute top-2.5 left-3 w-4 h-8 bg-white/60 rounded-[50%] transform -rotate-[28deg] blur-[0.6px] pointer-events-none"
+              />
+              {/* Secondary soft specular dot */}
+              <div
+                className="absolute top-7 left-2.5 w-2 h-2.5 bg-white/70 rounded-full blur-[0.5px] pointer-events-none"
+              />
 
-              <span className="text-xs font-serif font-bold text-white drop-shadow text-center px-1">
-                POP!
+              <span className="text-[11px] font-serif font-extrabold text-white/90 drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)] text-center px-1 tracking-wider uppercase">
+                POP! 🎈
               </span>
 
-              {/* Knot and string */}
+              {/* Realistic Balloon Tied Knot */}
               <div
-                className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full"
-                style={{ backgroundColor: balloon.color }}
+                className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-0 h-0"
+                style={{
+                  borderLeft: '5px solid transparent',
+                  borderRight: '5px solid transparent',
+                  borderBottom: `7px solid ${balloon.color}`,
+                  filter: 'brightness(0.85)',
+                }}
               />
-              <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-0.5 h-8 bg-zinc-400/60" />
+
+              {/* Graceful Wavy Balloon Ribbon / String */}
+              <svg
+                width="24"
+                height="65"
+                viewBox="0 0 24 65"
+                className="absolute -bottom-[62px] left-1/2 -translate-x-1/2 pointer-events-none overflow-visible"
+              >
+                <path
+                  d="M12 0 C17 15, 7 30, 15 45 S9 58, 12 65"
+                  fill="none"
+                  stroke="rgba(255, 255, 255, 0.7)"
+                  strokeWidth="1.2"
+                  strokeLinecap="round"
+                />
+              </svg>
             </div>
 
             {/* Hidden compliment tag */}
-            <div className="absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap px-2 py-0.5 rounded bg-black/80 text-[11px] font-serif text-gold-200 border border-gold-400/40 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+            <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap px-2.5 py-1 rounded-full bg-black/90 text-[11px] font-serif text-gold-200 border border-gold-400/50 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
               {balloon.text}
             </div>
           </div>
@@ -251,19 +278,25 @@ export const PartyPoppers: React.FC = () => {
         )}
       </div>
 
-      {/* Float up animation keyframes in standard CSS style */}
+      {/* Float up animation keyframes with natural gentle sway */}
       <style>{`
         @keyframes floatUp {
           0% {
-            transform: translateY(0) rotate(0deg);
-            opacity: 0.9;
+            transform: translateY(0) translateX(0) rotate(0deg);
+            opacity: 0.95;
+          }
+          25% {
+            transform: translateY(-28vh) translateX(12px) rotate(4deg);
           }
           50% {
-            transform: translateY(-50vh) rotate(5deg);
+            transform: translateY(-56vh) translateX(-10px) rotate(-4deg);
+          }
+          75% {
+            transform: translateY(-84vh) translateX(8px) rotate(3deg);
           }
           100% {
-            transform: translateY(-110vh) rotate(-5deg);
-            opacity: 0.2;
+            transform: translateY(-118vh) translateX(-4px) rotate(-2deg);
+            opacity: 0.15;
           }
         }
       `}</style>

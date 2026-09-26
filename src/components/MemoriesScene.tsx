@@ -9,11 +9,10 @@ export const MemoriesScene: React.FC<MemoriesSceneProps> = ({ onOpenLightbox }) 
   const getMemoryIcon = (id: string) => {
     switch (id) {
       case 'memory-01': return <BookOpen size={18} />;
-      case 'memory-02': return <Sparkles size={18} />;
-      case 'memory-03': return <Bus size={18} />;
-      case 'memory-04': return <Coffee size={18} />;
-      case 'memory-05': return <PhoneCall size={18} />;
-      case 'memory-06': return <MapPin size={18} />;
+      case 'memory-02': return <Bus size={18} />;
+      case 'memory-03': return <Coffee size={18} />;
+      case 'memory-04': return <PhoneCall size={18} />;
+      case 'memory-05': return <MapPin size={18} />;
       default: return <Heart size={18} />;
     }
   };
@@ -113,26 +112,12 @@ export const MemoriesScene: React.FC<MemoriesSceneProps> = ({ onOpenLightbox }) 
 
                       {/* Expand clue */}
                       <div className="absolute bottom-3 right-3 p-1.5 rounded-full bg-black/70 text-gold-300 border border-gold-500/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <ExternalLink size={14} />
                       </div>
                     </div>
-                  ) : (
-                    /* Elegant Glassmorphic Placeholder Card */
-                    <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden mb-5 bg-gradient-to-br from-gold-900/20 via-black/60 to-gold-950/40 border border-dashed border-gold-500/30 flex flex-col items-center justify-center p-6 text-center">
-                      <div className="p-3 rounded-full bg-gold-500/10 border border-gold-500/20 text-gold-400 mb-2 animate-pulse">
-                        <ImageIcon size={24} />
-                      </div>
-                      <span className="text-xs font-serif text-gold-300/80 tracking-wider">
-                        Cherished in Memory
-                      </span>
-                      <span className="text-[10px] text-zinc-500 mt-1">
-                        (Photo placeholder ready for drop-in)
-                      </span>
-                    </div>
-                  )}
+                  ) : null}
 
                   {/* Header info */}
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center justify-between mb-3">
                     <span className="text-xs font-mono text-gold-400 uppercase tracking-wider font-semibold">
                       {memory.tag}
                     </span>
@@ -142,19 +127,23 @@ export const MemoriesScene: React.FC<MemoriesSceneProps> = ({ onOpenLightbox }) 
                   </div>
 
                   {/* Title & Subtitle */}
-                  <h3 className="text-xl font-serif font-bold text-white group-hover:text-gold-200 transition-colors mb-1">
+                  <h3 className="text-2xl font-serif font-bold text-white group-hover:text-gold-200 transition-colors mb-1">
                     {memory.title}
                   </h3>
                   {memory.subtitle && (
-                    <p className="text-xs text-gold-400/80 font-medium mb-3">
+                    <p className="text-xs sm:text-sm text-gold-400/80 font-medium mb-4">
                       {memory.subtitle}
                     </p>
                   )}
 
                   {/* Description */}
-                  <p className="text-sm text-zinc-300 font-light leading-relaxed whitespace-pre-line">
-                    {memory.description}
-                  </p>
+                  <div className={!hasPhoto && !hasVideo ? "mt-4 p-5 rounded-2xl bg-gradient-to-br from-gold-500/10 via-black/40 to-transparent border border-gold-400/20" : ""}>
+                    <p className={`text-zinc-300 font-light leading-relaxed whitespace-pre-line ${
+                      !hasPhoto && !hasVideo ? "text-sm sm:text-base font-serif text-gold-100/90 italic" : "text-sm"
+                    }`}>
+                      {memory.description}
+                    </p>
+                  </div>
                 </div>
 
                 {/* Footer accent */}

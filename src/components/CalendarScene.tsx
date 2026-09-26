@@ -1,28 +1,32 @@
 import React, { useState } from 'react';
-import { Calendar as CalendarIcon, Sparkles, Heart, CheckCircle2 } from 'lucide-react';
+import { Calendar as CalendarIcon, Sparkles, Heart, Cake } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { PHOTO_CONFIG } from '../config/photos';
+import { synthAudio } from '../utils/soundSynthesizer';
 
 export const CalendarScene: React.FC = () => {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
-  const [isRevealed, setIsRevealed] = useState(false);
+  const [isRevealed, setIsRevealed] = useState<boolean>(false);
 
   // December 2006 started on a Friday (Dec 1, 2006 was Friday)
-  // Day of week index: Sun = 0, Mon = 1, Tue = 2, Wed = 3, Thu = 4, Fri = 5, Sat = 6
-  // Leading empty blanks for Dec 2006 = 5 (Sun, Mon, Tue, Wed, Thu)
+  // Blank leading slots for Dec 2006 = 5 (Sun, Mon, Tue, Wed, Thu)
   const totalDays = 31;
   const blankDays = 5;
 
   const handleDayClick = (day: number) => {
     setSelectedDay(day);
+    synthAudio.playPop();
+
     if (day === 30) {
       setIsRevealed(true);
+      synthAudio.playChime();
+
       // Trigger golden fireworks / confetti
       confetti({
-        particleCount: 80,
-        spread: 70,
+        particleCount: 100,
+        spread: 85,
         origin: { y: 0.6 },
-        colors: ['#fbf5b7', '#d4af37', '#faef82', '#ffffff', '#e5c158'],
+        colors: ['#fbf5b7', '#d4af37', '#faef82', '#ffffff', '#e5c158', '#ff4b72'],
       });
     }
   };
@@ -49,7 +53,7 @@ export const CalendarScene: React.FC = () => {
 
         {/* 3D Calendar Card Container */}
         <div className="glass-luxury rounded-3xl p-6 sm:p-10 gold-border-glow shadow-2xl max-w-xl mx-auto transition-transform duration-500 hover:scale-[1.01]">
-          {/* Calendar Header */}
+          {/* Calendar Header with Dynamic Sparks -> Stella's Photo Switch */}
           <div className="flex items-center justify-between border-b border-gold-500/20 pb-5 mb-6">
             <div className="text-left">
               <span className="text-xs uppercase tracking-widest text-gold-400 font-medium">Month of Magic</span>
@@ -57,9 +61,29 @@ export const CalendarScene: React.FC = () => {
                 DECEMBER <span className="text-gold-300">2006</span>
               </h3>
             </div>
-            <div className="p-3 rounded-2xl bg-gold-500/10 border border-gold-500/30 text-gold-300">
-              <Sparkles size={22} className="animate-spin-slow" />
-            </div>
+
+            {/* In sparks place: when date 30 is clicked, Stella's photo appears here! */}
+            {isRevealed ? (
+              <div
+                className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden border-2 border-gold-400 shadow-[0_0_25px_rgba(212,175,55,0.7)] animate-fade-in relative group cursor-pointer ring-2 ring-gold-300/60"
+                title="Stella with Car ✨"
+              >
+                <img
+                  src={PHOTO_CONFIG.carMemoryPhoto}
+                  alt="Stella with car"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
+                <Sparkles size={12} className="text-gold-300 absolute top-1 right-1 animate-spin-slow" />
+              </div>
+            ) : (
+              <div
+                className="p-3 rounded-2xl bg-gold-500/10 border border-gold-500/30 text-gold-300 transition-all duration-300"
+                title="Sparks of magic"
+              >
+                <Sparkles size={22} className="animate-spin-slow" />
+              </div>
+            )}
           </div>
 
           {/* Days of Week */}
@@ -90,30 +114,40 @@ export const CalendarScene: React.FC = () => {
                   onClick={() => handleDayClick(day)}
                   className={`relative h-10 sm:h-12 rounded-xl flex flex-col items-center justify-center font-mono text-sm sm:text-base transition-all duration-300 ${
                     isTargetDay
-                      ? 'bg-gradient-to-br from-gold-400 via-gold-500 to-amber-600 text-black font-extrabold shadow-[0_0_20px_rgba(212,175,55,0.7)] animate-pulse hover:scale-110 ring-2 ring-gold-200'
+                      ? 'bg-gradient-to-br from-gold-400 via-gold-500 to-amber-600 text-black font-extrabold shadow-[0_0_25px_rgba(212,175,55,0.85)] animate-pulse hover:scale-110 ring-2 ring-gold-200'
                       : isSelected
                       ? 'bg-white/20 text-white font-bold border border-gold-400/50'
                       : 'text-zinc-300 hover:bg-white/5 hover:text-gold-200 border border-transparent'
                   }`}
                 >
-                  <span>{day}</span>
-                  {isTargetDay && (
-                    <span className="absolute -bottom-1 w-1.5 h-1.5 bg-black rounded-full" />
+                  {isTargetDay ? (
+                    <div className="flex flex-col items-center leading-none">
+                      <div className="flex items-center gap-0.5">
+                        <span className="font-black text-sm sm:text-base">30</span>
+                        <span className="text-[11px] sm:text-xs">🎂</span>
+                      </div>
+                      <span className="text-[8px] font-sans font-bold tracking-tighter uppercase text-amber-950">
+                        Stella
+                      </span>
+                    </div>
+                  ) : (
+                    <span>{day}</span>
                   )}
                 </button>
               );
             })}
           </div>
 
-          <div className="mt-6 pt-4 border-t border-gold-500/15 flex items-center justify-center gap-2 text-xs text-gold-300/80">
+          {/* Calendar Footer Hint */}
+          <div className="mt-6 pt-4 border-t border-gold-500/15 flex flex-wrap items-center justify-center gap-2 text-xs text-gold-300/90 font-serif">
             <span className="w-2 h-2 rounded-full bg-gold-400 animate-ping" />
-            <span>Click Date 30 to unveil the miracle</span>
+            <span>Click Date 30 to unveil Stella's photo & birthday cake!</span>
           </div>
         </div>
 
-        {/* Revealed Memory Card when Dec 30 is clicked */}
+        {/* Revealed Memory Card when Dec 30 is clicked: Stella with Car & Birthday Cake */}
         {isRevealed && (
-          <div className="mt-12 glass-luxury rounded-3xl p-6 sm:p-10 border border-gold-400/50 shadow-[0_0_50px_rgba(212,175,55,0.25)] max-w-2xl mx-auto animate-fade-in text-center">
+          <div className="mt-12 glass-luxury rounded-3xl p-6 sm:p-10 border border-gold-400/50 shadow-[0_0_50px_rgba(212,175,55,0.3)] max-w-3xl mx-auto animate-fade-in text-center">
             {/* Quote */}
             <p className="text-lg sm:text-2xl font-serif italic text-gold-200 leading-relaxed">
               "And on this beautiful day, the world got a little brighter..."
@@ -130,14 +164,46 @@ export const CalendarScene: React.FC = () => {
               </p>
             </div>
 
-            {/* Stella's photo reveal */}
-            <div className="relative w-48 h-48 sm:w-60 sm:h-60 mx-auto rounded-2xl overflow-hidden p-1 bg-gradient-to-tr from-gold-400 to-amber-600 shadow-2xl mt-4">
-              <img
-                src={PHOTO_CONFIG.heroPhoto}
-                alt="Stella on her birthday"
-                className="w-full h-full object-cover rounded-xl"
-              />
-              <div className="absolute inset-0 border border-gold-300/50 rounded-xl pointer-events-none" />
+            {/* DUAL SHOWCASE: Stella with Car & The Birthday Cake */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 my-6 max-w-2xl mx-auto">
+              {/* 1. Stella's Photo with Car */}
+              <div className="relative rounded-2xl overflow-hidden p-1 bg-gradient-to-tr from-gold-400 to-amber-600 shadow-2xl group">
+                <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-black/60">
+                  <img
+                    src={PHOTO_CONFIG.carMemoryPhoto}
+                    alt="Stella with car"
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 bw-authentic"
+                  />
+                  <div className="absolute bottom-2 left-2 right-2 px-3 py-1.5 rounded-lg bg-black/80 backdrop-blur-md border border-gold-500/30 text-left">
+                    <span className="text-[10px] font-mono text-gold-400 uppercase tracking-widest block">
+                      Memorable Classic
+                    </span>
+                    <span className="text-xs font-serif text-white font-medium">
+                      Stella with Car 🚗✨
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. Birthday Cake Photo */}
+              <div className="relative rounded-2xl overflow-hidden p-1 bg-gradient-to-tr from-rose-400 to-amber-500 shadow-2xl group">
+                <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-black/60">
+                  <img
+                    src={PHOTO_CONFIG.cakePhoto}
+                    alt="Stella's Birthday Cake"
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute bottom-2 left-2 right-2 px-3 py-1.5 rounded-lg bg-black/80 backdrop-blur-md border border-rose-500/30 text-left">
+                    <span className="text-[10px] font-mono text-rose-300 uppercase tracking-widest block">
+                      Sweet Celebration
+                    </span>
+                    <span className="text-xs font-serif text-white font-medium flex items-center gap-1">
+                      <span>The Birthday Cake</span>
+                      <Cake size={13} className="text-amber-400" />
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className="mt-6 flex items-center justify-center gap-2 text-xs sm:text-sm text-gold-300/90 font-serif">
