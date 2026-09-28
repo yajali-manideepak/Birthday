@@ -13,7 +13,6 @@ import { LetterScene } from './components/LetterScene';
 import { FutureWishesScene } from './components/FutureWishesScene';
 import { FinalScene } from './components/FinalScene';
 import { LightboxModal } from './components/LightboxModal';
-import { PartyPoppers } from './components/PartyPoppers';
 import { GalleryPhoto } from './config/photos';
 
 export function App() {
@@ -60,11 +59,8 @@ export function App() {
       {/* Dynamic Golden Particle Field & Stardust */}
       <ParticleBackground />
 
-      {/* Floating Audio Controller & Autoplay (Bottom Left) */}
+      {/* Seamless Background Audio (No visible display) */}
       <AudioPlayer />
-
-      {/* Floating Interactive Party Poppers Dock & Balloon Pops (Bottom Right) */}
-      <PartyPoppers />
 
 
       {/* Main Continuous Journey */}
