@@ -60,11 +60,12 @@ export function App() {
       {/* Dynamic Golden Particle Field & Stardust */}
       <ParticleBackground />
 
-      {/* Floating Audio Controller */}
+      {/* Floating Audio Controller & Autoplay (Bottom Left) */}
       <AudioPlayer />
 
-      {/* Floating Interactive Party Poppers Dock & Balloon Pops */}
+      {/* Floating Interactive Party Poppers Dock & Balloon Pops (Bottom Right) */}
       <PartyPoppers />
+
 
       {/* Main Continuous Journey */}
       <main className="relative z-10">

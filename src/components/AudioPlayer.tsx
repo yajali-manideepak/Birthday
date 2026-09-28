@@ -19,29 +19,39 @@ export const AudioPlayer: React.FC = () => {
     audio.volume = volume;
     audioRef.current = audio;
 
-    // If MP3 file errors or is missing, fallback gracefully to our emotional synth
+    // If MP3 file errors or is missing, try alternate path before synth
     const handleError = () => {
-      console.info('Custom MP3 not found or failed to load. Using built-in romantic ambient synthesizer.');
-      setUseSynth(true);
-      if (isPlaying) {
-        synthAudio.setVolume(isMuted ? 0 : volume);
-        synthAudio.start();
+      if (audio.src && !audio.src.includes('doroon_doroon_2_o.mp3')) {
+        console.info('Switching to alternate audio source...');
+        audio.src = '/assets/audio/doroon_doroon_2_o.mp3';
+        audio.load();
+        if (isPlaying) {
+          audio.play().catch(() => setUseSynth(true));
+        }
+      } else {
+        console.info('Audio file failed, using romantic ambient synthesizer.');
+        setUseSynth(true);
+        if (isPlaying) {
+          synthAudio.setVolume(isMuted ? 0 : volume);
+          synthAudio.start();
+        }
       }
     };
 
     audio.addEventListener('error', handleError);
 
-    // Global click listener to unlock autoplay audio seamlessly on first interaction
+    // Global listeners to unlock audio seamlessly on first user interaction
     const handleFirstGesture = () => {
       if (!hasInteracted) {
         setHasInteracted(true);
-        // Start playing automatically with smooth fade-in
         startPlayback();
       }
     };
 
     window.addEventListener('click', handleFirstGesture, { once: true });
     window.addEventListener('touchstart', handleFirstGesture, { once: true });
+    window.addEventListener('pointerdown', handleFirstGesture, { once: true });
+    window.addEventListener('keydown', handleFirstGesture, { once: true });
 
     return () => {
       audio.removeEventListener('error', handleError);
@@ -49,6 +59,8 @@ export const AudioPlayer: React.FC = () => {
       synthAudio.stop();
       window.removeEventListener('click', handleFirstGesture);
       window.removeEventListener('touchstart', handleFirstGesture);
+      window.removeEventListener('pointerdown', handleFirstGesture);
+      window.removeEventListener('keydown', handleFirstGesture);
     };
   }, []);
 
@@ -67,11 +79,8 @@ export const AudioPlayer: React.FC = () => {
       synthAudio.setVolume(isMuted ? 0 : volume);
       synthAudio.start();
     } else if (audioRef.current) {
-      audioRef.current.play().catch(() => {
-        // Fallback to synth if browser rejects or file is missing
-        setUseSynth(true);
-        synthAudio.setVolume(isMuted ? 0 : volume);
-        synthAudio.start();
+      audioRef.current.play().catch((err) => {
+        console.warn('Autoplay prevented or waiting for interaction:', err);
       });
     }
   };
@@ -97,8 +106,8 @@ export const AudioPlayer: React.FC = () => {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 transition-all duration-300">
-      <div className="glass-luxury rounded-full px-4 py-2.5 flex items-center gap-3.5 shadow-2xl border border-gold-500/30 group hover:border-gold-400/60">
+    <div className="fixed bottom-6 left-6 z-50 transition-all duration-300">
+      <div className="glass-luxury rounded-full px-4 py-2.5 flex items-center gap-3.5 shadow-2xl border border-gold-500/30 group hover:border-gold-400/60 backdrop-blur-md">
         {/* Equalizer animation indicator */}
         <div className="flex items-end gap-1 h-4 w-4">
           <span
@@ -121,7 +130,7 @@ export const AudioPlayer: React.FC = () => {
         {/* Play / Pause button */}
         <button
           onClick={togglePlay}
-          className="w-8 h-8 rounded-full bg-gold-500/20 text-gold-300 hover:bg-gold-500 hover:text-black flex items-center justify-center transition-all duration-200 active:scale-95"
+          className="w-8 h-8 rounded-full bg-gold-500/20 text-gold-300 hover:bg-gold-500 hover:text-black flex items-center justify-center transition-all duration-200 active:scale-95 cursor-pointer"
           title={isPlaying ? 'Pause Music' : 'Play Music'}
           aria-label={isPlaying ? 'Pause Music' : 'Play Music'}
         >
@@ -131,10 +140,10 @@ export const AudioPlayer: React.FC = () => {
         {/* Label */}
         <div className="hidden sm:flex flex-col">
           <span className="text-[11px] font-medium tracking-wider text-gold-200 uppercase font-serif">
-            {isPlaying ? 'Playing Melody' : 'Romantic Music'}
+            {isPlaying ? 'Playing Melody' : 'Stella’s Music'}
           </span>
           <span className="text-[9px] text-zinc-400">
-            {useSynth ? 'Ambient Piano Suite' : 'Stella’s Melody'}
+            {useSynth ? 'Ambient Piano Suite' : 'Doroon Doroon 🎵'}
           </span>
         </div>
 
@@ -142,7 +151,7 @@ export const AudioPlayer: React.FC = () => {
         <div className="flex items-center gap-2 pl-1 border-l border-gold-500/20">
           <button
             onClick={toggleMute}
-            className="text-zinc-400 hover:text-gold-300 transition-colors p-1"
+            className="text-zinc-400 hover:text-gold-300 transition-colors p-1 cursor-pointer"
             title={isMuted ? 'Unmute' : 'Mute'}
             aria-label={isMuted ? 'Unmute' : 'Mute'}
           >

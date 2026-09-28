@@ -3,6 +3,7 @@ import { Sparkles, Heart, ChevronDown } from 'lucide-react';
 import { PHOTO_CONFIG } from '../config/photos';
 import { InstagramIcon } from './InstagramIcon';
 import { SecretLock } from './SecretLock';
+import { BirthdayBalloonCanvas } from './BirthdayBalloonCanvas';
 
 interface CountdownTime {
   days: number;
@@ -64,7 +65,7 @@ export const HeroScene: React.FC<HeroSceneProps> = ({
   }, []);
 
   return (
-    <div className="relative min-h-screen flex flex-col justify-between items-center text-center px-4 py-12 md:py-20 z-10">
+    <div id="hero-section" className="relative min-h-screen flex flex-col justify-between items-center text-center px-4 py-12 md:py-20 z-10">
       {/* Background ambient lighting */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[600px] h-[350px] sm:h-[600px] bg-gradient-to-br from-gold-600/15 via-gold-500/10 to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
 
@@ -169,12 +170,27 @@ export const HeroScene: React.FC<HeroSceneProps> = ({
           Revealed only after entering secret passcode 301206
           ========================================================================= */}
       {isUnlocked && (
-        <div id="birthday-reveal" className="flex flex-col items-center mt-16 sm:mt-24 max-w-3xl w-full animate-fade-in">
-          <div className="w-16 h-1 bg-gradient-to-r from-transparent via-gold-400 to-transparent my-6" />
+        <div id="birthday-reveal" className="flex flex-col items-center mt-12 sm:mt-16 w-full max-w-5xl animate-fade-in">
+          {/* Fireworks & Balloon Animation for HAPPY BIRTHDAY STELLA */}
+          <div className="w-full mb-8">
+            <BirthdayBalloonCanvas
+              onScrollToNext={() => {
+                const el = document.getElementById('portrait-section');
+                if (el) {
+                  el.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                  onExploreSurprise();
+                }
+              }}
+            />
+          </div>
 
-        <h2 className="text-3xl sm:text-5xl md:text-6xl font-cinzel font-bold text-white tracking-wide">
-          HAPPY BIRTHDAY
-        </h2>
+          <div id="portrait-section" className="flex flex-col items-center max-w-3xl w-full">
+            <div className="w-16 h-1 bg-gradient-to-r from-transparent via-gold-400 to-transparent my-6" />
+
+            <h2 className="text-3xl sm:text-5xl md:text-6xl font-cinzel font-bold text-white tracking-wide">
+              HAPPY BIRTHDAY
+            </h2>
 
         <h3 className="text-2xl sm:text-4xl font-serif text-gold-300 italic flex items-center gap-2 mt-2">
           My Dear Mam
@@ -237,7 +253,8 @@ export const HeroScene: React.FC<HeroSceneProps> = ({
           <ChevronDown size={18} className="text-gold-400/60" />
         </div>
       </div>
-    )}
-  </div>
+    </div>
+  )}
+</div>
 );
 };
