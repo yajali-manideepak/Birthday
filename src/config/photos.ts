@@ -59,7 +59,7 @@ export const PHOTO_CONFIG = {
   portraitPhoto: '/assets/photos/memory-final.jpg',
 
   // Birthday Cake & Celebration Assets
-  cakePhoto: '/assets/photos/stella-birthday-cake.jpg',
+  cakePhoto: '/assets/photos/birthday-cake-design.svg',
 
   // Audio track configuration
   // Place your MP3 file at: /public/assets/birthday-music.mp3

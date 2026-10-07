@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Sparkles, Heart, Wind, RotateCcw, Cake, Check, Flame } from 'lucide-react';
+import { Sparkles, Heart, Wind, RotateCcw, Cake, Check, Flame, Image as ImageIcon } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { synthAudio } from '../utils/soundSynthesizer';
+import { PHOTO_CONFIG } from '../config/photos';
 
 interface FloatingPastelBalloon {
   id: number;
@@ -20,6 +21,7 @@ export const BirthdayCakeScene: React.FC = () => {
   const [wishMade, setWishMade] = useState<boolean>(false);
   const [knifeCutting, setKnifeCutting] = useState<boolean>(false);
   const [smokeActive, setSmokeActive] = useState<boolean>(false);
+  const [cakeStyle, setCakeStyle] = useState<'photo' | 'animated'>('photo');
   const confettiAnimRef = useRef<number | null>(null);
 
   // Exact colors & duration from the Coding.Stella Animated Birthday Cake code:
@@ -147,7 +149,7 @@ export const BirthdayCakeScene: React.FC = () => {
           {/* Main Card Frame with sleek white/purple border */}
           <div className="relative rounded-2xl overflow-hidden p-6 sm:p-8 bg-[#161521] shadow-[0_25px_60px_rgba(0,0,0,0.9)] border border-white/20 sm:border-white/30 backdrop-blur-xl flex flex-col items-center justify-between min-h-[460px] sm:min-h-[500px]">
             {/* Top Status Bar */}
-            <div className="w-full flex items-center justify-between z-20 mb-4">
+            <div className="w-full flex flex-wrap items-center justify-between gap-2 z-20 mb-4">
               <div className="px-3 py-1 rounded-full glass-luxury border border-gold-400/40 text-gold-200 text-xs font-serif flex items-center gap-1.5 shadow-md">
                 {candlesLit ? (
                   <>
@@ -162,6 +164,36 @@ export const BirthdayCakeScene: React.FC = () => {
                 )}
               </div>
 
+              {/* Cake Style Toggle */}
+              <div className="flex items-center gap-1 p-0.5 rounded-full bg-black/50 border border-gold-500/30 text-[11px] font-serif shadow-inner">
+                <button
+                  type="button"
+                  onClick={() => setCakeStyle('photo')}
+                  className={`px-3 py-1 rounded-full transition-all flex items-center gap-1 cursor-pointer ${
+                    cakeStyle === 'photo'
+                      ? 'bg-gradient-to-r from-amber-500 to-gold-400 text-black font-semibold shadow-md'
+                      : 'text-zinc-300 hover:text-white'
+                  }`}
+                  title="View Custom SVG Cake Design"
+                >
+                  <Cake size={11} />
+                  <span>Custom Cake (SVG)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCakeStyle('animated')}
+                  className={`px-3 py-1 rounded-full transition-all flex items-center gap-1 cursor-pointer ${
+                    cakeStyle === 'animated'
+                      ? 'bg-gradient-to-r from-amber-500 to-gold-400 text-black font-semibold shadow-md'
+                      : 'text-zinc-300 hover:text-white'
+                  }`}
+                  title="View 3D Animated Cake"
+                >
+                  <Sparkles size={11} />
+                  <span>Animated 3D</span>
+                </button>
+              </div>
+
               {!candlesLit && (
                 <button
                   onClick={handleRelight}
@@ -169,7 +201,7 @@ export const BirthdayCakeScene: React.FC = () => {
                   className="px-3 py-1 rounded-full bg-gold-500/10 hover:bg-gold-500/25 border border-gold-400/30 text-gold-300 text-xs font-serif flex items-center gap-1 transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 >
                   <RotateCcw size={12} className="text-gold-400" />
-                  <span>Relight Candle</span>
+                  <span>Relight</span>
                 </button>
               )}
             </div>
@@ -304,40 +336,69 @@ export const BirthdayCakeScene: React.FC = () => {
                   </div>
                 </div>
 
-                {/* WHIPPED CREAM FROSTING CLOUD (Top of cake) */}
-                <div className="relative -mt-2 z-20 flex items-center justify-center">
-                  {/* Organic rounded whipped cream puffs */}
-                  <div className="relative w-28 h-9 flex items-center justify-center">
-                    <div className="absolute w-10 h-8 bg-white rounded-full top-0 left-2 shadow-[0_2px_4px_rgba(0,0,0,0.08)]" />
-                    <div className="absolute w-12 h-9 bg-white rounded-full top-[-4px] left-8 shadow-[0_2px_4px_rgba(0,0,0,0.08)]" />
-                    <div className="absolute w-10 h-8 bg-white rounded-full top-0 right-2 shadow-[0_2px_4px_rgba(0,0,0,0.08)]" />
-                    <div className="absolute w-8 h-6 bg-white/95 rounded-full top-2 left-6" />
-                    <div className="absolute w-8 h-6 bg-white/95 rounded-full top-2 right-6" />
-                    {/* Cream dollop peak */}
-                    <div className="absolute w-4 h-4 bg-white rounded-full top-[-6px] left-[48%] -translate-x-1/2" />
+                {cakeStyle === 'photo' ? (
+                  /* CUSTOM SVG CAKE PHOTO SHOWCASE */
+                  <div className="relative mt-3 flex flex-col items-center">
+                    <div className="relative max-w-[280px] sm:max-w-[340px] w-full rounded-2xl overflow-hidden p-1.5 bg-gradient-to-tr from-amber-400 via-rose-400 to-purple-500 shadow-[0_20px_50px_rgba(0,0,0,0.8)] border border-gold-400/40 group/cakephoto">
+                      <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-black/70 flex items-center justify-center">
+                        <img
+                          src={PHOTO_CONFIG.cakePhoto}
+                          alt="Stella's Birthday Cake Design"
+                          className="w-full h-full object-cover object-center group-hover/cakephoto:scale-105 transition-transform duration-700 filter drop-shadow-md"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent pointer-events-none" />
+
+                        {/* Overlay Badge */}
+                        <div className="absolute bottom-2 left-2 right-2 px-3 py-1.5 rounded-lg bg-black/80 backdrop-blur-md border border-gold-500/30 flex items-center justify-between text-left">
+                          <span className="text-xs font-serif text-white font-medium flex items-center gap-1.5">
+                            <Cake size={13} className="text-amber-400" />
+                            <span>Stella's Birthday Cake</span>
+                          </span>
+                          <span className="text-[10px] font-mono text-gold-300 uppercase tracking-wider bg-gold-500/20 px-1.5 py-0.5 rounded border border-gold-500/30">
+                            SVG Photo
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <>
+                    {/* WHIPPED CREAM FROSTING CLOUD (Top of cake) */}
+                    <div className="relative -mt-2 z-20 flex items-center justify-center">
+                      {/* Organic rounded whipped cream puffs */}
+                      <div className="relative w-28 h-9 flex items-center justify-center">
+                        <div className="absolute w-10 h-8 bg-white rounded-full top-0 left-2 shadow-[0_2px_4px_rgba(0,0,0,0.08)]" />
+                        <div className="absolute w-12 h-9 bg-white rounded-full top-[-4px] left-8 shadow-[0_2px_4px_rgba(0,0,0,0.08)]" />
+                        <div className="absolute w-10 h-8 bg-white rounded-full top-0 right-2 shadow-[0_2px_4px_rgba(0,0,0,0.08)]" />
+                        <div className="absolute w-8 h-6 bg-white/95 rounded-full top-2 left-6" />
+                        <div className="absolute w-8 h-6 bg-white/95 rounded-full top-2 right-6" />
+                        {/* Cream dollop peak */}
+                        <div className="absolute w-4 h-4 bg-white rounded-full top-[-6px] left-[48%] -translate-x-1/2" />
+                      </div>
+                    </div>
 
-                {/* TIERED CHOCOLATE CAKE WITH CREAM FILLING */}
-                <div className="relative -mt-2 flex flex-col items-center z-10 filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.5)]">
-                  {/* Layer 1: Top Chocolate Tier */}
-                  <div className="w-40 sm:w-44 h-4.5 rounded-t-md bg-[#7c584a] shadow-[inset_0_2px_2px_rgba(255,255,255,0.2)] border-t border-[#8e6859]" />
+                    {/* TIERED CHOCOLATE CAKE WITH CREAM FILLING */}
+                    <div className="relative -mt-2 flex flex-col items-center z-10 filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.5)]">
+                      {/* Layer 1: Top Chocolate Tier */}
+                      <div className="w-40 sm:w-44 h-4.5 rounded-t-md bg-[#7c584a] shadow-[inset_0_2px_2px_rgba(255,255,255,0.2)] border-t border-[#8e6859]" />
 
-                  {/* Filling 1: Cream Layer */}
-                  <div className="w-40 sm:w-44 h-1.5 bg-[#fbf5eb] shadow-[inset_0_1px_1px_rgba(0,0,0,0.15)]" />
+                      {/* Filling 1: Cream Layer */}
+                      <div className="w-40 sm:w-44 h-1.5 bg-[#fbf5eb] shadow-[inset_0_1px_1px_rgba(0,0,0,0.15)]" />
 
-                  {/* Layer 2: Middle Chocolate Tier */}
-                  <div className="w-40 sm:w-44 h-4.5 bg-[#734f41] shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]" />
+                      {/* Layer 2: Middle Chocolate Tier */}
+                      <div className="w-40 sm:w-44 h-4.5 bg-[#734f41] shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]" />
 
-                  {/* Filling 2: Cream Layer */}
-                  <div className="w-40 sm:w-44 h-1.5 bg-[#fbf5eb] shadow-[inset_0_1px_1px_rgba(0,0,0,0.15)]" />
+                      {/* Filling 2: Cream Layer */}
+                      <div className="w-40 sm:w-44 h-1.5 bg-[#fbf5eb] shadow-[inset_0_1px_1px_rgba(0,0,0,0.15)]" />
 
-                  {/* Layer 3: Bottom Chocolate Tier */}
-                  <div className="w-40 sm:w-44 h-5 rounded-b-sm bg-[#674436] shadow-[inset_0_-2px_3px_rgba(0,0,0,0.3)]" />
+                      {/* Layer 3: Bottom Chocolate Tier */}
+                      <div className="w-40 sm:w-44 h-5 rounded-b-sm bg-[#674436] shadow-[inset_0_-2px_3px_rgba(0,0,0,0.3)]" />
 
-                  {/* BASE PLATE (Thin minimal white/cream plate) */}
-                  <div className="w-48 sm:w-52 h-1.5 bg-[#f8f6f0] rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.45)] mt-0.5" />
-                </div>
+                      {/* BASE PLATE (Thin minimal white/cream plate) */}
+                      <div className="w-48 sm:w-52 h-1.5 bg-[#f8f6f0] rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.45)] mt-0.5" />
+                    </div>
+                  </>
+                )}
 
                 {/* Animated Golden Knife Cutting Overlay */}
                 {knifeCutting && (
@@ -436,6 +497,21 @@ export const BirthdayCakeScene: React.FC = () => {
             <p className="font-serif text-zinc-200 text-sm sm:text-base leading-relaxed">
               "A sweet bite for the sweetest person! May your special day and every single chapter ahead be as warm, delightful, and blessed as this moment."
             </p>
+
+            {/* The Cut Cake Photo Preview */}
+            <div className="my-4 mx-auto max-w-xs sm:max-w-sm rounded-xl overflow-hidden border border-gold-400/40 shadow-2xl bg-black/60 p-1 group">
+              <div className="relative aspect-[4/3] rounded-lg overflow-hidden">
+                <img
+                  src={PHOTO_CONFIG.cakePhoto}
+                  alt="Stella's Birthday Cake Design"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute bottom-1.5 left-2 right-2 px-2.5 py-1 rounded bg-black/80 backdrop-blur-md border border-gold-400/30 flex items-center justify-between text-[11px] font-serif text-gold-200">
+                  <span>Stella's Birthday Cake 🎂✨</span>
+                  <span className="text-[10px] text-zinc-300 font-mono">Special Design</span>
+                </div>
+              </div>
+            </div>
 
             <div className="mt-4 flex items-center justify-center gap-2 text-xs font-serif text-gold-300/90">
               <Heart size={14} className="fill-red-500 text-red-500 animate-pulse" />
