@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, PartyPopper, Heart, Volume2, X } from 'lucide-react';
+import { PartyPopper, Heart, Volume2, X } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { synthAudio } from '../utils/soundSynthesizer';
 

@@ -1,61 +1,61 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Sparkles, Heart, Wind, RotateCcw, Cake, Check, Flame, Image as ImageIcon } from 'lucide-react';
+import { Heart, Wind, RotateCcw, Cake, Check, Flame } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { synthAudio } from '../utils/soundSynthesizer';
-import { PHOTO_CONFIG } from '../config/photos';
 
-interface FloatingPastelBalloon {
+interface SliceDedication {
   id: number;
-  color: string;
-  shineColor: string;
-  left: string;
-  bottom: string;
-  size: number;
-  animDuration: number;
-  animDelay: number;
+  label: string;
+  recipient: string;
+  detail: string;
 }
+
+const SLICE_DEDICATIONS: SliceDedication[] = [
+  { id: 0, label: "Slice 01", recipient: "For The Birthday Queen Stella 👑", detail: "The sweetest first bite for the star of today." },
+  { id: 1, label: "Slice 02", recipient: "With Love For Mom & Dad ❤️", detail: "A slice of endless gratitude and warmth." },
+  { id: 2, label: "Slice 03", recipient: "For Lifelong Friends & Memories ✨", detail: "To all the shared laughs, bus rides, and smiles." },
+  { id: 3, label: "Slice 04", recipient: "For Bright Success & Future Dreams 🌟", detail: "May every ambition and goal become reality." },
+  { id: 4, label: "Slice 05", recipient: "For Endless Health & Radiance 😊", detail: "May that beautiful smile shine forever." },
+  { id: 5, label: "Slice 06", recipient: "The Pure Love Finale Slice 🍰💖", detail: "Every wish and blessing sealed with devotion." },
+];
 
 export const BirthdayCakeScene: React.FC = () => {
   const [candlesLit, setCandlesLit] = useState<boolean>(true);
-  const [isCakeCut, setIsCakeCut] = useState<boolean>(false);
   const [wishMade, setWishMade] = useState<boolean>(false);
-  const [knifeCutting, setKnifeCutting] = useState<boolean>(false);
   const [smokeActive, setSmokeActive] = useState<boolean>(false);
-  const [cakeStyle, setCakeStyle] = useState<'photo' | 'animated'>('photo');
+  
+  // Cut slices state: array of slice indices [0, 1, 2, 3, 4, 5] that have been cut
+  const [cutSlices, setCutSlices] = useState<number[]>([]);
+  const [activeCuttingIndex, setActiveCuttingIndex] = useState<number | null>(null);
+  const [justServedIndex, setJustServedIndex] = useState<number | null>(null);
+
   const confettiAnimRef = useRef<number | null>(null);
 
-  // Exact colors & duration from the Coding.Stella Animated Birthday Cake code:
-  // var colors = ['#D4AF37', '#C0C0C0', '#ffffff', '#F5F5DC'];
-  // var duration = 3000;
-  const fireCodingStellaConfetti = () => {
-    const duration = 3000;
+  const fireGoldenConfetti = () => {
+    const duration = 2500;
     const end = Date.now() + duration;
-    const colors = ['#D4AF37', '#C0C0C0', '#ffffff', '#F5F5DC'];
+    const colors = ['#D4AF37', '#FFD700', '#FFFFFF', '#F59E0B', '#FF4B72'];
 
     const frame = () => {
-      // Left cannon
       confetti({
-        particleCount: 7,
+        particleCount: 6,
         angle: 60,
         spread: 55,
-        origin: { x: 0, y: 0.8 },
-        colors: colors,
+        origin: { x: 0.1, y: 0.75 },
+        colors,
       });
-
-      // Right cannon
       confetti({
-        particleCount: 7,
+        particleCount: 6,
         angle: 120,
         spread: 55,
-        origin: { x: 1, y: 0.8 },
-        colors: colors,
+        origin: { x: 0.9, y: 0.75 },
+        colors,
       });
 
       if (Date.now() < end) {
         confettiAnimRef.current = requestAnimationFrame(frame);
       }
     };
-
     frame();
   };
 
@@ -67,7 +67,7 @@ export const BirthdayCakeScene: React.FC = () => {
     };
   }, []);
 
-  // Handle clicking candle to blow out the fire
+  // Blow out candle
   const handleCandleClick = () => {
     if (!candlesLit) return;
 
@@ -78,12 +78,12 @@ export const BirthdayCakeScene: React.FC = () => {
 
     setTimeout(() => {
       synthAudio.playChime();
-      fireCodingStellaConfetti();
-    }, 200);
+      fireGoldenConfetti();
+    }, 250);
 
     setTimeout(() => {
       setSmokeActive(false);
-    }, 2500);
+    }, 2200);
   };
 
   // Relight candle
@@ -93,36 +93,194 @@ export const BirthdayCakeScene: React.FC = () => {
     synthAudio.playChime();
   };
 
-  // Cut cake action
-  const handleCutCake = () => {
-    if (knifeCutting) return;
-    setKnifeCutting(true);
+  // Cut next available slice or a specific slice
+  const handleCutSlice = (targetSlice?: number) => {
+    if (activeCuttingIndex !== null) return;
+    if (cutSlices.length >= 6) return;
+
+    // Determine which slice to cut
+    let sliceToCut = targetSlice;
+    if (sliceToCut === undefined || cutSlices.includes(sliceToCut)) {
+      for (let i = 0; i < 6; i++) {
+        if (!cutSlices.includes(i)) {
+          sliceToCut = i;
+          break;
+        }
+      }
+    }
+
+    if (sliceToCut === undefined) return;
+
+    setActiveCuttingIndex(sliceToCut);
     synthAudio.playSlice();
 
     setTimeout(() => {
-      setIsCakeCut(true);
-      setKnifeCutting(false);
+      setCutSlices((prev) => [...prev, sliceToCut!]);
+      setJustServedIndex(sliceToCut!);
+      setActiveCuttingIndex(null);
       synthAudio.playPop();
-      synthAudio.playChime();
-      fireCodingStellaConfetti();
-    }, 900);
+
+      // Confetti on first slice or all slices completed
+      if (cutSlices.length === 0 || cutSlices.length === 5) {
+        fireGoldenConfetti();
+      }
+    }, 600);
   };
 
-  // Pastel balloons in background of the cake card (matching reel preview)
-  const pastelBalloons: FloatingPastelBalloon[] = [
-    { id: 1, color: '#FBE38E', shineColor: '#FFF6D1', left: '16%', bottom: '26%', size: 34, animDuration: 5.5, animDelay: 0 },
-    { id: 2, color: '#F4A7B9', shineColor: '#FDDCE4', left: '68%', bottom: '28%', size: 36, animDuration: 6.2, animDelay: 0.7 },
-    { id: 3, color: '#8FD6E8', shineColor: '#DBF4FB', left: '84%', bottom: '15%', size: 33, animDuration: 5.8, animDelay: 1.2 },
-    { id: 4, color: '#D4BBF2', shineColor: '#F3E8FD', left: '48%', bottom: '12%', size: 32, animDuration: 6.6, animDelay: 0.3 },
-    { id: 5, color: '#FFC6B3', shineColor: '#FFE6DC', left: '32%', bottom: '10%', size: 30, animDuration: 5.2, animDelay: 1.5 },
-  ];
+  // Reset/Bake cake again
+  const handleResetCake = () => {
+    setCutSlices([]);
+    setActiveCuttingIndex(null);
+    setJustServedIndex(null);
+    setCandlesLit(true);
+    synthAudio.playChime();
+  };
+
+  const totalSlices = 6;
+  const remainingCount = totalSlices - cutSlices.length;
+  const isCakeEmpty = remainingCount === 0;
+
+  // 3D Isometric Slice Geometry Generator
+  // Center is (170, 110), rx = 135, ry = 60, height = 75
+  const cx = 170;
+  const cy = 110;
+  const rx = 135;
+  const ry = 60;
+  const cakeH = 75;
+
+  const renderSlice = (idx: number) => {
+    const isCut = cutSlices.includes(idx);
+    const isBeingCut = activeCuttingIndex === idx;
+
+    // Angles for this slice in radians (6 slices = 60 deg each)
+    // Offset slightly so front slices look dramatic in 3D
+    const startDeg = idx * 60 - 30;
+    const endDeg = (idx + 1) * 60 - 30;
+    const startRad = (startDeg * Math.PI) / 180;
+    const endRad = (endDeg * Math.PI) / 180;
+    const midRad = ((startDeg + endDeg) / 2 * Math.PI) / 180;
+
+    const x1 = cx + rx * Math.cos(startRad);
+    const y1 = cy + ry * Math.sin(startRad);
+    const x2 = cx + rx * Math.cos(endRad);
+    const y2 = cy + ry * Math.sin(endRad);
+
+    // Decorative strawberry and cream rosette coordinates on top of slice
+    const decorX = cx + rx * 0.72 * Math.cos(midRad);
+    const decorY = cy + ry * 0.72 * Math.sin(midRad);
+
+    // If slice is cut, we don't render it on the cake! It's deleted/removed from the cake!
+    if (isCut) return null;
+
+    // Check if this slice is facing front (between 0 and 180 deg) so front side wall is rendered
+    const midDeg = (startDeg + endDeg) / 2;
+    const isFrontFacing = Math.sin(midRad) > -0.2;
+
+    // Slice translation when cutting
+    const shiftX = isBeingCut ? Math.cos(midRad) * 22 : 0;
+    const shiftY = isBeingCut ? Math.sin(midRad) * 14 - 15 : 0;
+
+    return (
+      <g
+        key={idx}
+        className="cursor-pointer transition-transform duration-500 hover:brightness-110"
+        onClick={() => handleCutSlice(idx)}
+        style={{
+          transform: `translate(${shiftX}px, ${shiftY}px)`,
+          transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
+      >
+        <title>{`Slice ${idx + 1} • Click to cut & serve!`}</title>
+        {/* INNER CUT SECTION: Left Face (from center to start angle) */}
+        {/* Rendered if previous slice (idx - 1) is already cut or being cut */}
+        {(cutSlices.includes((idx + 5) % 6) || isBeingCut) && (
+          <path
+            d={`M ${cx} ${cy} L ${x1} ${y1} L ${x1} ${y1 + cakeH} L ${cx} ${cy + cakeH} Z`}
+            fill="url(#spongeGradient)"
+            stroke="#4a2e22"
+            strokeWidth="0.8"
+          />
+        )}
+
+        {/* INNER CUT SECTION: Right Face (from center to end angle) */}
+        {/* Rendered if next slice (idx + 1) is already cut or being cut */}
+        {(cutSlices.includes((idx + 1) % 6) || isBeingCut) && (
+          <path
+            d={`M ${cx} ${cy} L ${x2} ${y2} L ${x2} ${y2 + cakeH} L ${cx} ${cy + cakeH} Z`}
+            fill="url(#spongeGradient)"
+            stroke="#4a2e22"
+            strokeWidth="0.8"
+          />
+        )}
+
+        {/* 3D OUTER CYLINDER WALL (Front facing) */}
+        {isFrontFacing && (
+          <g>
+            <path
+              d={`M ${x1} ${y1} A ${rx} ${ry} 0 0 1 ${x2} ${y2} L ${x2} ${y2 + cakeH} A ${rx} ${ry} 0 0 0 ${x1} ${y1 + cakeH} Z`}
+              fill="url(#frostingWallGrad)"
+              stroke="#3a2219"
+              strokeWidth="0.6"
+            />
+            {/* White cream drip accent along outer wall */}
+            <path
+              d={`M ${x1} ${y1} A ${rx} ${ry} 0 0 1 ${x2} ${y2} L ${x2} ${y2 + 8} A ${rx} ${ry} 0 0 0 ${x1} ${y1 + 8} Z`}
+              fill="#fff8f0"
+              opacity="0.9"
+            />
+          </g>
+        )}
+
+        {/* TOP FACE OF SLICE (Rich chocolate velvet frosting sector) */}
+        <path
+          d={`M ${cx} ${cy} L ${x1} ${y1} A ${rx} ${ry} 0 0 1 ${x2} ${y2} Z`}
+          fill="url(#frostingTopGrad)"
+          stroke="#42271d"
+          strokeWidth="0.9"
+        />
+
+        {/* Golden Honey / Caramel Glaze Drizzle */}
+        <path
+          d={`M ${cx + (x1 - cx) * 0.4} ${cy + (y1 - cy) * 0.4} Q ${decorX} ${decorY - 6} ${cx + (x2 - cx) * 0.4} ${cy + (y2 - cy) * 0.4}`}
+          fill="none"
+          stroke="#d4af37"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          opacity="0.85"
+        />
+
+        {/* Whipped Cream Rosette on Slice */}
+        <g transform={`translate(${decorX}, ${decorY})`}>
+          <circle cx="0" cy="0" r="9" fill="#ffffff" filter="drop-shadow(0 2px 3px rgba(0,0,0,0.25))" />
+          <circle cx="-3" cy="-2" r="5" fill="#fffef7" />
+          <circle cx="3" cy="-1" r="5" fill="#fdfbf5" />
+          <circle cx="0" cy="2" r="6" fill="#f8f4ec" />
+
+          {/* Fresh Ruby Red Strawberry on top of Cream */}
+          <path
+            d="M 0 -7 C 4 -7 7 -4 5 1 C 3 5 0 8 0 8 C 0 8 -3 5 -5 1 C -7 -4 -4 -7 0 -7 Z"
+            fill="#e11d48"
+            stroke="#be123c"
+            strokeWidth="0.5"
+            filter="drop-shadow(0 2px 2px rgba(0,0,0,0.3))"
+          />
+          {/* Strawberry seeds & shine */}
+          <circle cx="-1.5" cy="-2" r="0.6" fill="#fef08a" />
+          <circle cx="1.5" cy="-1" r="0.6" fill="#fef08a" />
+          <circle cx="0" cy="2" r="0.6" fill="#fef08a" />
+          {/* Green leaf cap */}
+          <path d="M 0 -7 L -2 -9 L 0 -8 L 2 -9 Z" fill="#15803d" />
+        </g>
+      </g>
+    );
+  };
 
   return (
     <section id="birthday-cake-section" className="relative min-h-screen py-24 px-4 sm:px-6 md:px-12 flex flex-col items-center justify-center z-10 select-none">
       {/* Golden Celebration Aura Background */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[380px] sm:w-[750px] h-[380px] sm:h-[750px] bg-gradient-to-tr from-amber-600/15 via-gold-500/12 to-rose-500/10 rounded-full blur-[130px] pointer-events-none -z-10" />
 
-      <div className="max-w-4xl w-full mx-auto flex flex-col items-center text-center">
+      <div className="max-w-6xl w-full mx-auto flex flex-col items-center text-center">
         {/* Badge Header */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gold-500/10 border border-gold-500/30 text-gold-300 text-xs sm:text-sm font-serif mb-4 animate-fade-in">
           <Cake size={15} className="text-gold-400" />
@@ -131,453 +289,359 @@ export const BirthdayCakeScene: React.FC = () => {
 
         {/* Section Heading */}
         <h2 className="text-3xl sm:text-5xl md:text-6xl font-cinzel font-bold text-white mb-2">
-          Make A Wish, <span className="gold-metallic-text">Stella</span> 🎂
+          Make A Wish & <span className="gold-metallic-text">Cut The Cake</span> 🎂
         </h2>
 
-        <p className="text-zinc-300 font-light text-sm sm:text-base max-w-xl mx-auto mb-8 leading-relaxed">
-          Tap the glowing candle to blow it out, launch the gold & silver celebration confetti, and make your special wish!
+        <p className="text-zinc-300 font-light text-sm sm:text-base max-w-2xl mx-auto mb-10 leading-relaxed">
+          Blow out the golden celebration candle, then cut slice by slice to serve Stella and everyone! Watch each cut slice transfer straight to the serving platter.
         </p>
 
-        {/* =========================================================================
-            THE ANIMATED BIRTHDAY CAKE CARD
-            Faithful recreation of @coding.stella's HTML CSS JS Birthday Cake
-            ========================================================================= */}
-        <div className="relative group max-w-lg w-full mx-auto my-2">
-          {/* Outer Ambient Glow */}
-          <div className="absolute -inset-3 sm:-inset-4 rounded-3xl bg-gradient-to-tr from-purple-600/30 via-gold-500/20 to-pink-500/30 opacity-60 blur-2xl group-hover:opacity-80 transition-opacity duration-700" />
+        {/* MAIN DUAL STAGE: 3D CAKE STAND ON LEFT + SERVING PLATTER ON RIGHT */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full max-w-5xl items-center">
+          
+          {/* =========================================================================
+              LEFT COLUMN: THE 3D INTERACTIVE CAKE
+              ========================================================================= */}
+          <div className="lg:col-span-7 flex flex-col items-center">
+            <div className="relative w-full max-w-md sm:max-w-lg p-6 sm:p-8 rounded-3xl glass-luxury border border-gold-400/30 shadow-[0_20px_50px_rgba(0,0,0,0.85)] flex flex-col items-center">
+              
+              {/* Status Header */}
+              <div className="w-full flex items-center justify-between mb-4 px-2">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-gold-400 animate-pulse" />
+                  <span className="text-xs font-serif text-gold-300 font-medium">
+                    {isCakeEmpty ? "All Slices Cut & Served!" : `${remainingCount} of 6 Slices Left`}
+                  </span>
+                </div>
 
-          {/* Main Card Frame with sleek white/purple border */}
-          <div className="relative rounded-2xl overflow-hidden p-6 sm:p-8 bg-[#161521] shadow-[0_25px_60px_rgba(0,0,0,0.9)] border border-white/20 sm:border-white/30 backdrop-blur-xl flex flex-col items-center justify-between min-h-[460px] sm:min-h-[500px]">
-            {/* Top Status Bar */}
-            <div className="w-full flex flex-wrap items-center justify-between gap-2 z-20 mb-4">
-              <div className="px-3 py-1 rounded-full glass-luxury border border-gold-400/40 text-gold-200 text-xs font-serif flex items-center gap-1.5 shadow-md">
-                {candlesLit ? (
-                  <>
-                    <Flame size={13} className="text-amber-400 fill-amber-400 animate-pulse" />
-                    <span>Candle Glowing • Tap to Blow</span>
-                  </>
-                ) : (
-                  <>
-                    <Check size={13} className="text-emerald-400" />
-                    <span>Wish Sent to the Stars ✨</span>
-                  </>
+                {!candlesLit && (
+                  <button
+                    onClick={handleRelight}
+                    className="px-3 py-1 rounded-full bg-gold-500/15 hover:bg-gold-500/30 border border-gold-400/40 text-gold-200 text-xs font-serif flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                  >
+                    <RotateCcw size={12} className="text-gold-400" />
+                    <span>Relight Candle</span>
+                  </button>
                 )}
               </div>
 
-              {/* Cake Style Toggle */}
-              <div className="flex items-center gap-1 p-0.5 rounded-full bg-black/50 border border-gold-500/30 text-[11px] font-serif shadow-inner">
-                <button
-                  type="button"
-                  onClick={() => setCakeStyle('photo')}
-                  className={`px-3 py-1 rounded-full transition-all flex items-center gap-1 cursor-pointer ${
-                    cakeStyle === 'photo'
-                      ? 'bg-gradient-to-r from-amber-500 to-gold-400 text-black font-semibold shadow-md'
-                      : 'text-zinc-300 hover:text-white'
-                  }`}
-                  title="View Custom SVG Cake Design"
+              {/* SVG 3D CAKE VIEWPORT */}
+              <div className="relative w-full aspect-[4/3] flex items-center justify-center">
+                <svg
+                  viewBox="0 0 340 260"
+                  className="w-full h-full max-w-[360px] overflow-visible drop-shadow-[0_25px_35px_rgba(0,0,0,0.8)]"
                 >
-                  <Cake size={11} />
-                  <span>Custom Cake (SVG)</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCakeStyle('animated')}
-                  className={`px-3 py-1 rounded-full transition-all flex items-center gap-1 cursor-pointer ${
-                    cakeStyle === 'animated'
-                      ? 'bg-gradient-to-r from-amber-500 to-gold-400 text-black font-semibold shadow-md'
-                      : 'text-zinc-300 hover:text-white'
-                  }`}
-                  title="View 3D Animated Cake"
-                >
-                  <Sparkles size={11} />
-                  <span>Animated 3D</span>
-                </button>
-              </div>
+                  <defs>
+                    {/* Cake Top Frosting Gradient */}
+                    <radialGradient id="frostingTopGrad" cx="50%" cy="40%" r="60%">
+                      <stop offset="0%" stopColor="#6d4c41" />
+                      <stop offset="60%" stopColor="#4e342e" />
+                      <stop offset="100%" stopColor="#3e2723" />
+                    </radialGradient>
 
-              {!candlesLit && (
-                <button
-                  onClick={handleRelight}
-                  title="Relight Candle"
-                  className="px-3 py-1 rounded-full bg-gold-500/10 hover:bg-gold-500/25 border border-gold-400/30 text-gold-300 text-xs font-serif flex items-center gap-1 transition-all hover:scale-105 active:scale-95 cursor-pointer"
-                >
-                  <RotateCcw size={12} className="text-gold-400" />
-                  <span>Relight</span>
-                </button>
-              )}
-            </div>
+                    {/* Cake Side Wall Gradient */}
+                    <linearGradient id="frostingWallGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#3e2723" />
+                      <stop offset="25%" stopColor="#5d4037" />
+                      <stop offset="50%" stopColor="#6d4c41" />
+                      <stop offset="75%" stopColor="#4e342e" />
+                      <stop offset="100%" stopColor="#2e1c17" />
+                    </linearGradient>
 
-            {/* Sparkles / Fireworks effect behind cake */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-              {/* Twinkling star sparkles around cake */}
-              <div className="absolute top-1/4 left-1/4 w-1.5 h-1.5 bg-white rounded-full animate-ping opacity-75" />
-              <div className="absolute top-1/3 right-1/4 w-1 h-1 bg-gold-300 rounded-full animate-pulse opacity-90" />
-              <div className="absolute top-2/5 left-1/3 w-1 h-1 bg-white rounded-full animate-pulse delay-300 opacity-60" />
-              <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-pink-200 rounded-full animate-ping delay-500 opacity-60" />
-              <div className="absolute top-20 right-20 w-1 h-1 bg-gold-200 rounded-full animate-pulse delay-700" />
+                    {/* Delicious Cut Sponge Layers Pattern */}
+                    <linearGradient id="spongeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#3e2723" />
+                      <stop offset="15%" stopColor="#8d6e63" />
+                      <stop offset="22%" stopColor="#fff8e7" />{/* Cream stripe */}
+                      <stop offset="30%" stopColor="#795548" />
+                      <stop offset="50%" stopColor="#e11d48" />{/* Berry jam stripe */}
+                      <stop offset="58%" stopColor="#fff8e7" />{/* Cream stripe */}
+                      <stop offset="70%" stopColor="#6d4c41" />
+                      <stop offset="100%" stopColor="#3e2723" />
+                    </linearGradient>
 
-              {/* Sparkle cluster on left (from screenshot) */}
-              <svg
-                className="absolute top-[32%] left-[24%] w-16 h-16 text-white/30 animate-pulse"
-                viewBox="0 0 100 100"
-                fill="currentColor"
-              >
-                <circle cx="20" cy="20" r="2.5" />
-                <circle cx="45" cy="15" r="1.5" />
-                <circle cx="65" cy="30" r="2" />
-                <circle cx="35" cy="40" r="3" />
-                <circle cx="50" cy="55" r="1.5" />
-                <circle cx="75" cy="45" r="2" />
-                <circle cx="25" cy="65" r="2.5" />
-              </svg>
-            </div>
+                    {/* Gold Pedestal Stand Gradient */}
+                    <linearGradient id="goldStandGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#aa771c" />
+                      <stop offset="35%" stopColor="#faef82" />
+                      <stop offset="50%" stopColor="#fff" />
+                      <stop offset="70%" stopColor="#e5c158" />
+                      <stop offset="100%" stopColor="#895b1b" />
+                    </linearGradient>
+                  </defs>
 
-            {/* Floating Pastel Balloons with Strings */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-              {pastelBalloons.map((b) => (
-                <div
-                  key={b.id}
-                  style={{
-                    left: b.left,
-                    bottom: b.bottom,
-                    animation: `balloonFloat ${b.animDuration}s ease-in-out infinite alternate`,
-                    animationDelay: `${b.animDelay}s`,
-                  }}
-                  className="absolute flex flex-col items-center"
-                >
-                  {/* Balloon Oval */}
-                  <div
-                    style={{
-                      width: `${b.size}px`,
-                      height: `${b.size * 1.25}px`,
-                      backgroundColor: b.color,
-                      borderRadius: '50% 50% 50% 50% / 40% 40% 60% 60%',
-                      boxShadow: `inset -3px -3px 8px rgba(0,0,0,0.15), inset 3px 3px 8px rgba(255,255,255,0.4), 0 8px 20px ${b.color}40`,
-                    }}
-                    className="relative"
-                  >
-                    {/* Specular Glare */}
-                    <div
-                      style={{
-                        backgroundColor: b.shineColor,
-                      }}
-                      className="absolute top-1.5 left-2 w-2 h-4 rounded-full opacity-80 transform -rotate-30"
-                    />
-
-                    {/* Balloon Knot */}
-                    <div
-                      style={{
-                        borderLeft: '3px solid transparent',
-                        borderRight: '3px solid transparent',
-                        borderBottom: `4px solid ${b.color}`,
-                        filter: 'brightness(0.9)',
-                      }}
-                      className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0"
-                    />
-                  </div>
-
-                  {/* Gentle Swaying Balloon String */}
-                  <svg
-                    width="12"
-                    height="45"
-                    viewBox="0 0 12 45"
-                    className="overflow-visible opacity-60"
-                  >
+                  {/* 1. LUXURY GOLD/SILVER CAKE PEDESTAL STAND */}
+                  <g>
+                    {/* Stand base ellipse */}
+                    <ellipse cx={cx} cy={cy + cakeH + 35} rx={rx * 0.75} ry={ry * 0.55} fill="url(#goldStandGrad)" opacity="0.9" />
+                    {/* Stand pillar */}
                     <path
-                      d="M6 0 Q10 15 4 28 T6 45"
-                      fill="none"
-                      stroke="#ffffff"
-                      strokeWidth="0.8"
+                      d={`M ${cx - 24} ${cy + cakeH + 10} L ${cx - 16} ${cy + cakeH + 34} L ${cx + 16} ${cy + cakeH + 34} L ${cx + 24} ${cy + cakeH + 10} Z`}
+                      fill="url(#goldStandGrad)"
                     />
-                  </svg>
-                </div>
-              ))}
-            </div>
+                    {/* Platter top plate rim */}
+                    <ellipse cx={cx} cy={cy + cakeH + 10} rx={rx + 16} ry={ry + 10} fill="url(#goldStandGrad)" filter="drop-shadow(0 4px 10px rgba(0,0,0,0.5))" />
+                    {/* Inner porcelain plate base */}
+                    <ellipse cx={cx} cy={cy + cakeH + 7} rx={rx + 10} ry={ry + 7} fill="#1a1520" stroke="#d4af37" strokeWidth="1" />
+                  </g>
 
-            {/* Central Stage: The Cake + Candle + Text */}
-            <div className="relative z-10 flex flex-col items-center my-auto pt-6 pb-4">
-              {/* THE CAKE CONTAINER */}
-              <div className="relative flex flex-col items-center">
-                {/* CANDLE & FLAME (.candle, .fire) */}
-                <div
-                  onClick={handleCandleClick}
-                  className="candle relative flex flex-col items-center cursor-pointer group/candle z-30 transition-transform active:scale-95"
-                  title="Click to blow out candle!"
-                >
-                  {/* Fire Flame (.fire) - Fades out on click */}
-                  <div
-                    className={`fire relative transition-all duration-500 ${
-                      candlesLit
-                        ? 'opacity-100 scale-100'
-                        : 'opacity-0 scale-50 pointer-events-none'
-                    }`}
-                  >
-                    {/* Multi-layered flickering flame */}
-                    <div className="w-4 h-7 rounded-full bg-gradient-to-t from-orange-500 via-amber-300 to-yellow-100 shadow-[0_0_16px_5px_rgba(255,170,0,0.85)] animate-flame-flicker transform origin-bottom flex items-center justify-center">
-                      {/* Hot white inner flame core */}
-                      <div className="w-1.5 h-3 rounded-full bg-white/90 shadow-[0_0_6px_#ffffff] transform translateY(1px)" />
-                    </div>
-                  </div>
-
-                  {/* Smoke Wisps when extinguished */}
-                  {smokeActive && !candlesLit && (
-                    <div className="absolute -top-7 left-1/2 -translate-x-1/2 pointer-events-none flex flex-col items-center animate-smoke-rise">
-                      <div className="w-1 h-5 bg-gradient-to-t from-zinc-300/80 via-zinc-400/50 to-transparent blur-[0.8px] rounded-full" />
-                      <div className="w-2.5 h-3 bg-zinc-400/40 blur-[1.2px] rounded-full -mt-2" />
-                    </div>
+                  {/* EMPTY CAKE CRUMBS (When cake is eaten/cut) */}
+                  {isCakeEmpty ? (
+                    <g className="animate-fade-in">
+                      {/* Leftover crumbs */}
+                      <circle cx={cx - 30} cy={cy + cakeH + 4} r="2.5" fill="#8d6e63" />
+                      <circle cx={cx - 15} cy={cy + cakeH + 7} r="1.8" fill="#e11d48" />
+                      <circle cx={cx + 20} cy={cy + cakeH + 2} r="2.2" fill="#fff8e7" />
+                      <circle cx={cx + 45} cy={cy + cakeH + 5} r="3" fill="#8d6e63" />
+                      <circle cx={cx - 5} cy={cy + cakeH + 6} r="1.5" fill="#d4af37" />
+                      
+                      <text
+                        x={cx}
+                        y={cy + 30}
+                        textAnchor="middle"
+                        fill="#faef82"
+                        fontFamily="Playfair Display, serif"
+                        fontSize="15"
+                        fontStyle="italic"
+                        fontWeight="600"
+                      >
+                        All 6 Slices Lovingly Served! 🍰
+                      </text>
+                    </g>
+                  ) : (
+                    /* 2. THE 6 3D CAKE SLICES */
+                    <g>
+                      {/* Render order: back slices first (idx: 3, 2, 4, 1, 5, 0) for correct 3D overlap */}
+                      {[3, 2, 4, 1, 5, 0].map((idx) => renderSlice(idx))}
+                    </g>
                   )}
 
-                  {/* Candle Wick */}
-                  <div className="w-[2px] h-[7px] bg-[#3a2e2b] -mt-0.5 rounded-full" />
+                  {/* 3. CENTER CANDLE & FLAME (Only rendered if cake has at least 1 slice) */}
+                  {!isCakeEmpty && (
+                    <g
+                      transform={`translate(${cx}, ${cy - 12})`}
+                      className="cursor-pointer"
+                      onClick={handleCandleClick}
+                    >
+                      {/* Candle Wick */}
+                      <line x1="0" y1="-32" x2="0" y2="-40" stroke="#221815" strokeWidth="1.8" strokeLinecap="round" />
 
-                  {/* Candle Body */}
-                  <div className="w-3 h-10 rounded-t-sm rounded-b-sm bg-gradient-to-r from-[#f7f5f2] via-[#ffffff] to-[#e8e4dc] shadow-[0_2px_8px_rgba(0,0,0,0.3)] relative overflow-hidden">
-                    {/* Elegant diagonal stripes */}
-                    <div className="absolute inset-0 opacity-40 bg-[repeating-linear-gradient(45deg,#f4a7b9,#f4a7b9_3px,transparent_3px,transparent_7px)]" />
-                  </div>
-                </div>
+                      {/* Candle Body */}
+                      <rect
+                        x="-4.5"
+                        y="-32"
+                        width="9"
+                        height="34"
+                        rx="2"
+                        fill="#ffffff"
+                        stroke="#e2e8f0"
+                        strokeWidth="0.8"
+                      />
+                      {/* Gold candle spiral stripe */}
+                      <path d="M -4.5 -26 Q 0 -22 4.5 -25 L 4.5 -19 Q 0 -16 -4.5 -20 Z" fill="#d4af37" opacity="0.8" />
+                      <path d="M -4.5 -13 Q 0 -9 4.5 -12 L 4.5 -6 Q 0 -3 -4.5 -7 Z" fill="#d4af37" opacity="0.8" />
 
-                {cakeStyle === 'photo' ? (
-                  /* CUSTOM SVG CAKE PHOTO SHOWCASE */
-                  <div className="relative mt-3 flex flex-col items-center">
-                    <div className="relative max-w-[280px] sm:max-w-[340px] w-full rounded-2xl overflow-hidden p-1.5 bg-gradient-to-tr from-amber-400 via-rose-400 to-purple-500 shadow-[0_20px_50px_rgba(0,0,0,0.8)] border border-gold-400/40 group/cakephoto">
-                      <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-black/70 flex items-center justify-center">
-                        <img
-                          src={PHOTO_CONFIG.cakePhoto}
-                          alt="Stella's Birthday Cake Design"
-                          className="w-full h-full object-cover object-center group-hover/cakephoto:scale-105 transition-transform duration-700 filter drop-shadow-md"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent pointer-events-none" />
+                      {/* Candle Flame (Flickering) */}
+                      {candlesLit ? (
+                        <g transform="translate(0, -42)" className="animate-flame-flicker origin-bottom">
+                          {/* Flame Aura */}
+                          <circle cx="0" cy="-6" r="14" fill="#f59e0b" opacity="0.3" filter="blur(4px)" />
+                          {/* Outer Yellow Flame */}
+                          <path
+                            d="M 0 -18 C 5 -12 7 -4 4 2 C 2 5 -2 5 -4 2 C -7 -4 -5 -12 0 -18 Z"
+                            fill="url(#flameGrad)"
+                          />
+                          {/* Inner White Hot Core */}
+                          <ellipse cx="0" cy="-2" rx="2" ry="4" fill="#ffffff" />
+                        </g>
+                      ) : (
+                        /* Smoke wisps when blown out */
+                        smokeActive && (
+                          <g transform="translate(0, -44)" className="animate-smoke-rise">
+                            <path
+                              d="M 0 0 Q -4 -10 2 -18 Q 8 -26 0 -34"
+                              fill="none"
+                              stroke="rgba(200, 200, 210, 0.65)"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              filter="blur(1px)"
+                            />
+                          </g>
+                        )
+                      )}
+                    </g>
+                  )}
 
-                        {/* Overlay Badge */}
-                        <div className="absolute bottom-2 left-2 right-2 px-3 py-1.5 rounded-lg bg-black/80 backdrop-blur-md border border-gold-500/30 flex items-center justify-between text-left">
-                          <span className="text-xs font-serif text-white font-medium flex items-center gap-1.5">
-                            <Cake size={13} className="text-amber-400" />
-                            <span>Stella's Birthday Cake</span>
-                          </span>
-                          <span className="text-[10px] font-mono text-gold-300 uppercase tracking-wider bg-gold-500/20 px-1.5 py-0.5 rounded border border-gold-500/30">
-                            SVG Photo
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    {/* WHIPPED CREAM FROSTING CLOUD (Top of cake) */}
-                    <div className="relative -mt-2 z-20 flex items-center justify-center">
-                      {/* Organic rounded whipped cream puffs */}
-                      <div className="relative w-28 h-9 flex items-center justify-center">
-                        <div className="absolute w-10 h-8 bg-white rounded-full top-0 left-2 shadow-[0_2px_4px_rgba(0,0,0,0.08)]" />
-                        <div className="absolute w-12 h-9 bg-white rounded-full top-[-4px] left-8 shadow-[0_2px_4px_rgba(0,0,0,0.08)]" />
-                        <div className="absolute w-10 h-8 bg-white rounded-full top-0 right-2 shadow-[0_2px_4px_rgba(0,0,0,0.08)]" />
-                        <div className="absolute w-8 h-6 bg-white/95 rounded-full top-2 left-6" />
-                        <div className="absolute w-8 h-6 bg-white/95 rounded-full top-2 right-6" />
-                        {/* Cream dollop peak */}
-                        <div className="absolute w-4 h-4 bg-white rounded-full top-[-6px] left-[48%] -translate-x-1/2" />
-                      </div>
-                    </div>
+                  <defs>
+                    <linearGradient id="flameGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+                      <stop offset="0%" stopColor="#ef4444" />
+                      <stop offset="40%" stopColor="#f59e0b" />
+                      <stop offset="90%" stopColor="#fef08a" />
+                      <stop offset="100%" stopColor="#ffffff" />
+                    </linearGradient>
+                  </defs>
+                </svg>
 
-                    {/* TIERED CHOCOLATE CAKE WITH CREAM FILLING */}
-                    <div className="relative -mt-2 flex flex-col items-center z-10 filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.5)]">
-                      {/* Layer 1: Top Chocolate Tier */}
-                      <div className="w-40 sm:w-44 h-4.5 rounded-t-md bg-[#7c584a] shadow-[inset_0_2px_2px_rgba(255,255,255,0.2)] border-t border-[#8e6859]" />
-
-                      {/* Filling 1: Cream Layer */}
-                      <div className="w-40 sm:w-44 h-1.5 bg-[#fbf5eb] shadow-[inset_0_1px_1px_rgba(0,0,0,0.15)]" />
-
-                      {/* Layer 2: Middle Chocolate Tier */}
-                      <div className="w-40 sm:w-44 h-4.5 bg-[#734f41] shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]" />
-
-                      {/* Filling 2: Cream Layer */}
-                      <div className="w-40 sm:w-44 h-1.5 bg-[#fbf5eb] shadow-[inset_0_1px_1px_rgba(0,0,0,0.15)]" />
-
-                      {/* Layer 3: Bottom Chocolate Tier */}
-                      <div className="w-40 sm:w-44 h-5 rounded-b-sm bg-[#674436] shadow-[inset_0_-2px_3px_rgba(0,0,0,0.3)]" />
-
-                      {/* BASE PLATE (Thin minimal white/cream plate) */}
-                      <div className="w-48 sm:w-52 h-1.5 bg-[#f8f6f0] rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.45)] mt-0.5" />
-                    </div>
-                  </>
-                )}
-
-                {/* Animated Golden Knife Cutting Overlay */}
-                {knifeCutting && (
-                  <div className="absolute inset-0 flex items-center justify-center z-40 pointer-events-none">
+                {/* Slicing Knife Animation Overlay */}
+                {activeCuttingIndex !== null && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
                     <div className="w-1.5 h-36 bg-gradient-to-b from-transparent via-gold-200 to-gold-500 shadow-[0_0_25px_#ffd700] transform -rotate-12 animate-pulse" />
                   </div>
                 )}
               </div>
 
-              {/* TEXT BELOW CAKE (Matches coding.stella styling exactly) */}
-              <div className="mt-8 flex flex-col items-center">
-                <h3 className="text-2xl sm:text-3xl font-sans font-light text-white tracking-wider lowercase">
-                  happy birthday!
-                </h3>
-                <p className="text-base sm:text-lg font-serif italic text-zinc-300 font-normal mt-0.5 tracking-wide">
-                  Stella
-                </p>
-              </div>
-            </div>
+              {/* Interactive Slicing Buttons Below Cake */}
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+                {candlesLit ? (
+                  <button
+                    onClick={handleCandleClick}
+                    className="btn-gold px-6 py-2.5 rounded-full text-xs sm:text-sm font-serif tracking-wider flex items-center gap-2 shadow-lg hover:scale-105 transition-all cursor-pointer"
+                  >
+                    <Wind size={15} />
+                    <span>Blow Out Candle 🎂</span>
+                  </button>
+                ) : null}
 
-            {/* Bottom Subtle Indicator Hint */}
-            <div className="w-full text-center z-20 pt-2 pb-1">
-              <span className="text-[11px] font-serif text-zinc-400 tracking-wider">
-                {candlesLit
-                  ? '✨ Click the candle to blow it out & make your wish ✨'
-                  : '🎉 Wish received! Tap Relight to make another wish 🎉'}
+                {!isCakeEmpty ? (
+                  <button
+                    onClick={() => handleCutSlice()}
+                    disabled={activeCuttingIndex !== null}
+                    className="btn-gold px-7 py-3 rounded-full text-sm sm:text-base font-serif tracking-wider flex items-center gap-2.5 shadow-xl hover:scale-105 active:scale-95 transition-all cursor-pointer font-bold"
+                  >
+                    <Cake size={17} />
+                    <span>Cut Slice #{cutSlices.length + 1} 🍰</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleResetCake}
+                    className="btn-gold px-7 py-3 rounded-full text-sm sm:text-base font-serif tracking-wider flex items-center gap-2.5 shadow-xl hover:scale-105 active:scale-95 transition-all cursor-pointer font-bold"
+                  >
+                    <RotateCcw size={16} />
+                    <span>Bake & Restore Cake 🎂</span>
+                  </button>
+                )}
+              </div>
+
+              <span className="text-[11px] font-serif text-zinc-400 mt-3 block">
+                {isCakeEmpty
+                  ? "🎉 Every slice has been placed on the serving platter!"
+                  : "Tip: Tap 'Cut Slice' or click any slice directly on the cake to cut and serve it!"}
               </span>
+            </div>
+          </div>
+
+          {/* =========================================================================
+              RIGHT COLUMN: THE LUXURY SERVING PLATTER (Served Slices)
+              ========================================================================= */}
+          <div className="lg:col-span-5 flex flex-col items-center w-full">
+            <div className="w-full glass-luxury rounded-3xl p-6 sm:p-7 border border-gold-400/40 shadow-2xl flex flex-col items-center">
+              
+              {/* Serving Platter Header */}
+              <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gold-500/20 w-full justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-xl bg-gold-500/10 border border-gold-500/30 text-gold-300">
+                    <Cake size={16} />
+                  </div>
+                  <div className="text-left">
+                    <h4 className="text-sm sm:text-base font-cinzel font-bold text-white">
+                      Dessert Serving Platter
+                    </h4>
+                    <span className="text-[10px] font-mono text-gold-400 uppercase tracking-widest block">
+                      {cutSlices.length === 0 ? "Awaiting First Slice" : `${cutSlices.length} of 6 Slices Served`}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="px-3 py-1 rounded-full bg-gold-500/15 border border-gold-400/40 text-gold-300 font-mono text-xs font-bold">
+                  {cutSlices.length}/6 🍰
+                </div>
+              </div>
+
+              {/* SERVING PLATE CONTAINER */}
+              <div className="relative w-full min-h-[260px] flex flex-col items-center justify-center p-4 rounded-2xl bg-black/40 border border-gold-500/20 overflow-hidden">
+                {cutSlices.length === 0 ? (
+                  <div className="flex flex-col items-center text-center p-6 text-zinc-400">
+                    <div className="w-16 h-16 rounded-full border-2 border-dashed border-gold-500/30 flex items-center justify-center text-gold-400 mb-3 opacity-60">
+                      <Cake size={24} />
+                    </div>
+                    <p className="font-serif italic text-sm text-zinc-300">
+                      "Cut a slice from the cake to place it here on the serving plate..."
+                    </p>
+                    <span className="text-[11px] font-sans text-gold-400/80 mt-2">
+                      Ready for the Birthday Star Stella!
+                    </span>
+                  </div>
+                ) : (
+                  <div className="w-full flex flex-col gap-3 animate-fade-in">
+                    {cutSlices.map((sliceIdx) => {
+                      const dedication = SLICE_DEDICATIONS[sliceIdx];
+                      const isLatest = justServedIndex === sliceIdx;
+
+                      return (
+                        <div
+                          key={sliceIdx}
+                          className={`p-3.5 rounded-xl border text-left transition-all duration-300 flex items-center gap-3.5 ${
+                            isLatest
+                              ? 'bg-gradient-to-r from-gold-950/60 via-amber-950/40 to-black/60 border-gold-400 shadow-[0_0_15px_rgba(212,175,55,0.4)] scale-[1.02]'
+                              : 'bg-black/50 border-gold-500/20'
+                          }`}
+                        >
+                          {/* Mini Realistic Cake Slice Icon */}
+                          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#6d4c41] to-[#3e2723] border border-gold-400/40 flex items-center justify-center shrink-0 shadow-md relative">
+                            <span className="text-base select-none">🍰</span>
+                            {/* Little fresh strawberry badge */}
+                            <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-rose-600 border border-white/40" />
+                          </div>
+
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[10px] font-mono text-gold-400 uppercase tracking-widest font-bold">
+                                {dedication.label}
+                              </span>
+                              {isLatest && (
+                                <span className="text-[9px] font-serif bg-gold-500 text-black px-1.5 py-0.5 rounded-full font-bold">
+                                  Just Served
+                                </span>
+                              )}
+                            </div>
+                            <h5 className="text-xs sm:text-sm font-serif font-bold text-white truncate">
+                              {dedication.recipient}
+                            </h5>
+                            <p className="text-[11px] font-serif text-zinc-300 italic truncate">
+                              {dedication.detail}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Dedication Footer */}
+              <div className="mt-4 pt-3 border-t border-gold-500/15 w-full text-center flex items-center justify-center gap-1.5 text-xs font-serif text-gold-200/90">
+                <Heart size={13} className="fill-red-500 text-red-500" />
+                <span>Every slice shared with sweetness and devotion</span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Interactive Action Buttons */}
-        <div className="flex flex-wrap items-center justify-center gap-4 mt-8">
-          {candlesLit ? (
-            <button
-              onClick={handleCandleClick}
-              className="btn-gold px-7 py-3.5 rounded-full text-sm sm:text-base font-serif tracking-wider flex items-center gap-2.5 shadow-xl hover:scale-105 transition-all cursor-pointer group"
-            >
-              <Wind size={18} className="text-black group-hover:translate-x-1 transition-transform" />
-              <span>Blow Out Candle & Make a Wish 🎂</span>
-            </button>
-          ) : (
-            <button
-              onClick={handleRelight}
-              className="btn-gold-outline px-6 py-3 rounded-full text-xs sm:text-sm font-serif tracking-wider flex items-center gap-2 transition-all hover:scale-105 cursor-pointer"
-            >
-              <RotateCcw size={15} className="text-gold-400" />
-              <span>Relight Candle 🕯️</span>
-            </button>
-          )}
-
-          <button
-            onClick={handleCutCake}
-            disabled={knifeCutting}
-            className={`px-7 py-3.5 rounded-full text-sm sm:text-base font-serif tracking-wider flex items-center gap-2.5 shadow-xl transition-all cursor-pointer ${
-              isCakeCut
-                ? 'bg-emerald-500/20 border border-emerald-400/60 text-emerald-200 hover:bg-emerald-500/30'
-                : 'glass-luxury border border-gold-400/50 text-gold-200 hover:text-white hover:border-gold-300 hover:scale-105'
-            }`}
-          >
-            <Cake size={18} className={isCakeCut ? 'text-emerald-400' : 'text-gold-400'} />
-            <span>{isCakeCut ? 'Cut Another Slice 🍰' : 'Cut the Cake 🍰✨'}</span>
-          </button>
-        </div>
-
-        {/* Birthday Wish Confirmation Notification */}
+        {/* Wish Confirmation Card when Candle was blown */}
         {wishMade && (
           <div className="mt-8 max-w-xl w-full glass-luxury rounded-2xl p-5 border border-gold-400/40 text-center animate-fade-in shadow-2xl relative overflow-hidden">
             <div className="absolute -top-10 -right-10 w-24 h-24 bg-gold-400/20 rounded-full blur-xl pointer-events-none" />
             <div className="flex items-center justify-center gap-2 text-gold-300 font-serif text-base sm:text-lg font-bold mb-2">
-              <Sparkles size={18} className="text-gold-400 fill-gold-400" />
+              <Heart size={16} className="text-red-500 fill-red-500" />
               <span>A Sweet Birthday Wish For Stella</span>
-              <Sparkles size={18} className="text-gold-400 fill-gold-400" />
+              <Heart size={16} className="text-red-500 fill-red-500" />
             </div>
             <p className="font-serif italic text-zinc-200 text-sm sm:text-base leading-relaxed">
               "May every dream whispered into this golden flame find its way to reality. May your 18th year and all the years ahead bring you infinite peace, radiant smiles, and boundless joy."
             </p>
           </div>
         )}
-
-        {/* Cake Slice Reveal Card */}
-        {isCakeCut && (
-          <div className="mt-6 max-w-xl w-full glass-card rounded-2xl p-6 border border-rose-500/30 text-center animate-fade-in shadow-2xl relative overflow-hidden bg-gradient-to-br from-rose-950/40 via-black/60 to-amber-950/40">
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <span className="text-2xl">🍰</span>
-              <span className="text-xs sm:text-sm font-mono tracking-widest text-rose-300 uppercase">
-                First Sweet Slice Served
-              </span>
-              <span className="text-2xl">✨</span>
-            </div>
-
-            <h4 className="text-xl sm:text-2xl font-serif font-bold text-white mb-2">
-              Here's the First Slice For You! ❤️
-            </h4>
-
-            <p className="font-serif text-zinc-200 text-sm sm:text-base leading-relaxed">
-              "A sweet bite for the sweetest person! May your special day and every single chapter ahead be as warm, delightful, and blessed as this moment."
-            </p>
-
-            {/* The Cut Cake Photo Preview */}
-            <div className="my-4 mx-auto max-w-xs sm:max-w-sm rounded-xl overflow-hidden border border-gold-400/40 shadow-2xl bg-black/60 p-1 group">
-              <div className="relative aspect-[4/3] rounded-lg overflow-hidden">
-                <img
-                  src={PHOTO_CONFIG.cakePhoto}
-                  alt="Stella's Birthday Cake Design"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute bottom-1.5 left-2 right-2 px-2.5 py-1 rounded bg-black/80 backdrop-blur-md border border-gold-400/30 flex items-center justify-between text-[11px] font-serif text-gold-200">
-                  <span>Stella's Birthday Cake 🎂✨</span>
-                  <span className="text-[10px] text-zinc-300 font-mono">Special Design</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-4 flex items-center justify-center gap-2 text-xs font-serif text-gold-300/90">
-              <Heart size={14} className="fill-red-500 text-red-500 animate-pulse" />
-              <span>Crafted with love for Stella's Birthday</span>
-              <Heart size={14} className="fill-red-500 text-red-500 animate-pulse" />
-            </div>
-          </div>
-        )}
       </div>
-
-      {/* Custom Keyframe Animations for Flame Flickering, Smoke, and Floating Balloons */}
-      <style>{`
-        @keyframes flameFlicker {
-          0%, 100% {
-            transform: scale(1) translateY(0) rotate(-1deg);
-            filter: drop-shadow(0 0 10px rgba(255, 170, 0, 0.9));
-          }
-          25% {
-            transform: scale(1.05, 0.95) translateY(-1px) rotate(1deg);
-            filter: drop-shadow(0 0 14px rgba(255, 200, 0, 1));
-          }
-          50% {
-            transform: scale(0.97, 1.03) translateY(-2px) rotate(-1.5deg);
-            filter: drop-shadow(0 0 8px rgba(255, 140, 0, 0.8));
-          }
-          75% {
-            transform: scale(1.02, 0.98) translateY(-0.5px) rotate(1.5deg);
-            filter: drop-shadow(0 0 12px rgba(255, 180, 0, 0.95));
-          }
-        }
-
-        .animate-flame-flicker {
-          animation: flameFlicker 0.4s ease-in-out infinite alternate;
-        }
-
-        @keyframes balloonFloat {
-          0% {
-            transform: translateY(0) rotate(0deg);
-          }
-          50% {
-            transform: translateY(-16px) rotate(2.5deg);
-          }
-          100% {
-            transform: translateY(-32px) rotate(-2deg);
-          }
-        }
-
-        @keyframes smokeRise {
-          0% {
-            opacity: 0.9;
-            transform: translateY(0) scale(1);
-          }
-          50% {
-            opacity: 0.5;
-            transform: translateY(-18px) scale(1.4) skewX(4deg);
-          }
-          100% {
-            opacity: 0;
-            transform: translateY(-35px) scale(2) skewX(-6deg);
-          }
-        }
-
-        .animate-smoke-rise {
-          animation: smokeRise 2s ease-out forwards;
-        }
-      `}</style>
     </section>
   );
 };

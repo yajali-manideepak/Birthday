@@ -1,4 +1,4 @@
-import { Heart, Sparkles, RotateCcw } from 'lucide-react';
+import { Heart, RotateCcw } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { PHOTO_CONFIG } from '../config/photos';
 import { InstagramIcon } from './InstagramIcon';
@@ -44,13 +44,13 @@ export const FinalScene: React.FC<FinalSceneProps> = ({ onReplay }) => {
             </div>
           </div>
 
-          {/* Sparkle badge */}
+          {/* Heart badge */}
           <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 glass-luxury px-6 py-2 rounded-full border border-gold-400/60 shadow-xl flex items-center gap-2 backdrop-blur-md">
-            <Sparkles size={16} className="text-gold-300" />
+            <Heart size={14} className="fill-red-500 text-red-500" />
             <span className="text-xs sm:text-sm font-serif text-gold-200 tracking-widest font-bold">
               Forever Cherished
             </span>
-            <Sparkles size={16} className="text-gold-300" />
+            <Heart size={14} className="fill-red-500 text-red-500" />
           </div>
         </div>
 

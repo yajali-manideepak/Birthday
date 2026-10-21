@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar as CalendarIcon, Sparkles, Heart, Cake } from 'lucide-react';
+import { Calendar as CalendarIcon, Heart } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { PHOTO_CONFIG } from '../config/photos';
 import { synthAudio } from '../utils/soundSynthesizer';
@@ -28,6 +28,9 @@ export const CalendarScene: React.FC = () => {
         origin: { y: 0.6 },
         colors: ['#fbf5b7', '#d4af37', '#faef82', '#ffffff', '#e5c158', '#ff4b72'],
       });
+    } else {
+      // Return to normal when selecting any other date
+      setIsRevealed(false);
     }
   };
 
@@ -53,7 +56,7 @@ export const CalendarScene: React.FC = () => {
 
         {/* 3D Calendar Card Container */}
         <div className="glass-luxury rounded-3xl p-6 sm:p-10 gold-border-glow shadow-2xl max-w-xl mx-auto transition-transform duration-500 hover:scale-[1.01]">
-          {/* Calendar Header with Dynamic Sparks -> Stella's Photo Switch */}
+          {/* Calendar Header */}
           <div className="flex items-center justify-between border-b border-gold-500/20 pb-5 mb-6">
             <div className="text-left">
               <span className="text-xs uppercase tracking-widest text-gold-400 font-medium">Month of Magic</span>
@@ -62,11 +65,11 @@ export const CalendarScene: React.FC = () => {
               </h3>
             </div>
 
-            {/* In sparks place: when date 30 is clicked, Stella's photo appears here! */}
+            {/* In header: Stella's photo or calendar badge */}
             {isRevealed ? (
               <div
                 className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden border-2 border-gold-400 shadow-[0_0_25px_rgba(212,175,55,0.7)] animate-fade-in relative group cursor-pointer ring-2 ring-gold-300/60"
-                title="Stella with Car ✨"
+                title="Stella with Car"
               >
                 <img
                   src={PHOTO_CONFIG.carMemoryPhoto}
@@ -74,14 +77,13 @@ export const CalendarScene: React.FC = () => {
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
-                <Sparkles size={12} className="text-gold-300 absolute top-1 right-1 animate-spin-slow" />
               </div>
             ) : (
               <div
                 className="p-3 rounded-2xl bg-gold-500/10 border border-gold-500/30 text-gold-300 transition-all duration-300"
-                title="Sparks of magic"
+                title="December Calendar"
               >
-                <Sparkles size={22} className="animate-spin-slow" />
+                <CalendarIcon size={20} className="text-gold-400" />
               </div>
             )}
           </div>
@@ -141,13 +143,13 @@ export const CalendarScene: React.FC = () => {
           {/* Calendar Footer Hint */}
           <div className="mt-6 pt-4 border-t border-gold-500/15 flex flex-wrap items-center justify-center gap-2 text-xs text-gold-300/90 font-serif">
             <span className="w-2 h-2 rounded-full bg-gold-400 animate-ping" />
-            <span>Click Date 30 to unveil Stella's photo & birthday cake!</span>
+            <span>Click Date 30 to unveil Stella's special photo</span>
           </div>
         </div>
 
-        {/* Revealed Memory Card when Dec 30 is clicked: Stella with Car & Birthday Cake */}
+        {/* Revealed Memory Card when Dec 30 is clicked: Stella's Photo Only */}
         {isRevealed && (
-          <div className="mt-12 glass-luxury rounded-3xl p-6 sm:p-10 border border-gold-400/50 shadow-[0_0_50px_rgba(212,175,55,0.3)] max-w-3xl mx-auto animate-fade-in text-center">
+          <div className="mt-12 glass-luxury rounded-3xl p-6 sm:p-10 border border-gold-400/50 shadow-[0_0_50px_rgba(212,175,55,0.3)] max-w-2xl mx-auto animate-fade-in text-center">
             {/* Quote */}
             <p className="text-lg sm:text-2xl font-serif italic text-gold-200 leading-relaxed">
               "And on this beautiful day, the world got a little brighter..."
@@ -164,52 +166,32 @@ export const CalendarScene: React.FC = () => {
               </p>
             </div>
 
-            {/* DUAL SHOWCASE: Stella with Car & The Birthday Cake */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 my-6 max-w-2xl mx-auto">
-              {/* 1. Stella's Photo with Car */}
-              <div className="relative rounded-2xl overflow-hidden p-1 bg-gradient-to-tr from-gold-400 to-amber-600 shadow-2xl group">
-                <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-black/60">
+            {/* Single Showcase: Stella's Photo (No Cake) */}
+            <div className="my-6 max-w-sm sm:max-w-md mx-auto">
+              <div className="relative rounded-3xl overflow-hidden p-1.5 bg-gradient-to-tr from-gold-300 via-gold-500 to-amber-700 shadow-[0_0_40px_rgba(212,175,55,0.4)] group">
+                <div className="relative aspect-square w-full rounded-2xl overflow-hidden bg-black/60">
                   <img
                     src={PHOTO_CONFIG.carMemoryPhoto}
                     alt="Stella with car"
                     className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 bw-authentic"
                   />
-                  <div className="absolute bottom-2 left-2 right-2 px-3 py-1.5 rounded-lg bg-black/80 backdrop-blur-md border border-gold-500/30 text-left">
-                    <span className="text-[10px] font-mono text-gold-400 uppercase tracking-widest block">
-                      Memorable Classic
-                    </span>
-                    <span className="text-xs font-serif text-white font-medium">
-                      Stella with Car 🚗✨
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* 2. Birthday Cake Photo */}
-              <div className="relative rounded-2xl overflow-hidden p-1 bg-gradient-to-tr from-rose-400 to-amber-500 shadow-2xl group">
-                <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-black/60">
-                  <img
-                    src={PHOTO_CONFIG.cakePhoto}
-                    alt="Stella's Birthday Cake"
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute bottom-2 left-2 right-2 px-3 py-1.5 rounded-lg bg-black/80 backdrop-blur-md border border-rose-500/30 text-left">
-                    <span className="text-[10px] font-mono text-rose-300 uppercase tracking-widest block">
-                      Sweet Celebration
-                    </span>
-                    <span className="text-xs font-serif text-white font-medium flex items-center gap-1">
-                      <span>The Birthday Cake</span>
-                      <Cake size={13} className="text-amber-400" />
-                    </span>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent pointer-events-none" />
+                  <div className="absolute bottom-3 left-3 right-3 px-4 py-2 rounded-xl bg-black/75 backdrop-blur-md border border-gold-500/30 text-left flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] font-mono text-gold-400 uppercase tracking-widest block">
+                        Memorable Classic
+                      </span>
+                      <span className="text-sm font-serif text-white font-medium">
+                        Stella with Car
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="mt-6 flex items-center justify-center gap-2 text-xs sm:text-sm text-gold-300/90 font-serif">
-              <Sparkles size={16} className="text-gold-400" />
               <span>A soul destined to inspire and be cherished forever</span>
-              <Sparkles size={16} className="text-gold-400" />
             </div>
           </div>
         )}

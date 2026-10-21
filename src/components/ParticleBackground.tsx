@@ -43,8 +43,18 @@ export const ParticleBackground: React.FC = () => {
       targetMouseY = e.clientY;
     };
 
+    let lastScrollY = window.scrollY;
+    let scrollSpeed = 0;
+
+    const handleScroll = () => {
+      const delta = window.scrollY - lastScrollY;
+      lastScrollY = window.scrollY;
+      scrollSpeed = Math.max(-15, Math.min(15, delta * 0.25));
+    };
+
     window.addEventListener('resize', handleResize);
     window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
     // Color palette for golden celestial dust
     const goldPalette = [
@@ -78,6 +88,9 @@ export const ParticleBackground: React.FC = () => {
       mouseX += (targetMouseX - mouseX) * 0.05;
       mouseY += (targetMouseY - mouseY) * 0.05;
 
+      // Smooth decay of scroll speed
+      scrollSpeed *= 0.94;
+
       ctx.clearRect(0, 0, width, height);
 
       // Subtle ambient golden radial glow in background center
@@ -99,9 +112,10 @@ export const ParticleBackground: React.FC = () => {
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
 
-        p.y += p.speedY;
+        // Dynamic motion reacting to scroll velocity
+        p.y += p.speedY - scrollSpeed * 0.35;
         p.x += p.speedX;
-        p.twinklePhase += p.twinkleSpeed;
+        p.twinklePhase += p.twinkleSpeed * (1 + Math.abs(scrollSpeed) * 0.15);
 
         // Wrap around boundaries
         if (p.y < -10) {
@@ -152,6 +166,7 @@ export const ParticleBackground: React.FC = () => {
     return () => {
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('scroll', handleScroll);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);

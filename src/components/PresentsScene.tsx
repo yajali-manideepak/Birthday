@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Gift, Heart, Sparkles, Maximize2, Eye, Award, CheckCircle } from 'lucide-react';
+import { Gift, Heart, Maximize2, Eye, Award, CheckCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { PRESENTS_DATA, PresentItem, GalleryPhoto } from '../config/photos';
 import { synthAudio } from '../utils/soundSynthesizer';
@@ -189,8 +189,8 @@ export const PresentsScene: React.FC<PresentsSceneProps> = ({ onOpenLightbox }) 
 
                 {/* Bottom Card Action Footer */}
                 <div className="mt-6 pt-4 border-t border-gold-500/20 flex items-center justify-between text-xs text-gold-300/90 font-serif">
-                  <span className="flex items-center gap-1">
-                    <Sparkles size={12} className="text-gold-400" />
+                  <span className="flex items-center gap-1.5">
+                    <Heart size={12} className="fill-red-500/80 text-red-500" />
                     Specially Dedicated
                   </span>
                   <button

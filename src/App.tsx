@@ -4,7 +4,6 @@ import { AudioPlayer } from './components/AudioPlayer';
 import { HeroScene } from './components/HeroScene';
 import { CalendarScene } from './components/CalendarScene';
 import { GalleryScene } from './components/GalleryScene';
-import { BirthdayWishScene } from './components/BirthdayWishScene';
 import { BirthdayCakeScene } from './components/BirthdayCakeScene';
 import { PresentsScene } from './components/PresentsScene';
 import { MemoriesScene } from './components/MemoriesScene';
@@ -13,11 +12,25 @@ import { LetterScene } from './components/LetterScene';
 import { FutureWishesScene } from './components/FutureWishesScene';
 import { FinalScene } from './components/FinalScene';
 import { LightboxModal } from './components/LightboxModal';
+import { CustomCursor } from './components/CustomCursor';
+import { ScrollReveal } from './components/ScrollReveal';
 import { GalleryPhoto } from './config/photos';
 
 export function App() {
   const [selectedPhoto, setSelectedPhoto] = useState<GalleryPhoto | null>(null);
   const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
+  const [scrollProgress, setScrollProgress] = useState<number>(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      if (total > 0) {
+        setScrollProgress((window.scrollY / total) * 100);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleUnlock = () => {
     setIsUnlocked(true);
@@ -56,12 +69,22 @@ export function App() {
 
   return (
     <div className="relative min-h-screen bg-[#050508] text-white selection:bg-gold-500/30 selection:text-gold-200 overflow-x-hidden">
+      {/* Luxury Golden Scroll Progress Bar */}
+      <div className="fixed top-0 left-0 right-0 h-[3px] z-50 pointer-events-none bg-black/40">
+        <div
+          className="h-full bg-gradient-to-r from-gold-500 via-amber-300 to-yellow-200 shadow-[0_0_12px_rgba(212,175,55,0.85)] transition-all duration-100 ease-out"
+          style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
+
+      {/* Interactive Luxury Animated Cursor with Rings & Stardust */}
+      <CustomCursor />
+
       {/* Dynamic Golden Particle Field & Stardust */}
       <ParticleBackground />
 
       {/* Seamless Background Audio (No visible display) */}
       <AudioPlayer />
-
 
       {/* Main Continuous Journey */}
       <main className="relative z-10">
@@ -74,36 +97,51 @@ export function App() {
 
         {/* All remaining scenes are unlocked ONLY after entering secret code 301206 */}
         {isUnlocked && (
-          <div className="animate-fade-in">
+          <div className="animate-fade-in space-y-4">
             {/* Scene 3: Calendar Interaction */}
-            <CalendarScene />
+            <ScrollReveal direction="up" delay={100}>
+              <CalendarScene />
+            </ScrollReveal>
 
             {/* Scene 4: Photo Memory Gallery */}
-            <GalleryScene onOpenLightbox={handleOpenLightbox} />
+            <ScrollReveal direction="up" delay={150}>
+              <GalleryScene onOpenLightbox={handleOpenLightbox} />
+            </ScrollReveal>
 
-            {/* Scene 5: Birthday Wish */}
-            <BirthdayWishScene />
-
-            {/* Scene 6: Interactive Birthday Cake Celebration (Candles, Cake Cutting & Wishes) */}
-            <BirthdayCakeScene />
+            {/* Scene 5: Interactive Birthday Cake Celebration (Candles, Cake Cutting & Wishes) */}
+            <ScrollReveal direction="up" delay={150}>
+              <BirthdayCakeScene />
+            </ScrollReveal>
 
             {/* Scene 7: Surprise Presents & Favors (Bracelet, Nail Polish, Mehendi) */}
-            <PresentsScene onOpenLightbox={handleOpenLightbox} />
+            <ScrollReveal direction="up" delay={150}>
+              <PresentsScene onOpenLightbox={handleOpenLightbox} />
+            </ScrollReveal>
 
             {/* Scene 8: Our Memories */}
-            <MemoriesScene onOpenLightbox={handleOpenLightbox} />
+            <ScrollReveal direction="up" delay={150}>
+              <MemoriesScene onOpenLightbox={handleOpenLightbox} />
+            </ScrollReveal>
 
             {/* Scene 9: The Feeling */}
-            <TheFeelingScene />
+            <ScrollReveal direction="up" delay={150}>
+              <TheFeelingScene />
+            </ScrollReveal>
 
             {/* Scene 10: Personal Message */}
-            <LetterScene />
+            <ScrollReveal direction="up" delay={150}>
+              <LetterScene />
+            </ScrollReveal>
 
             {/* Scene 11: Wishes For Her Future */}
-            <FutureWishesScene />
+            <ScrollReveal direction="up" delay={150}>
+              <FutureWishesScene />
+            </ScrollReveal>
 
             {/* Scene 12 & Finale: Final Tribute & Replay */}
-            <FinalScene onReplay={handleReplay} />
+            <ScrollReveal direction="up" delay={150}>
+              <FinalScene onReplay={handleReplay} />
+            </ScrollReveal>
           </div>
         )}
       </main>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, Heart, ChevronDown } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { PHOTO_CONFIG } from '../config/photos';
 import { InstagramIcon } from './InstagramIcon';
 import { SecretLock } from './SecretLock';
@@ -72,10 +72,8 @@ export const HeroScene: React.FC<HeroSceneProps> = ({
       {/* Top intro decorative line */}
       <div className="flex items-center gap-3 text-gold-300/80 tracking-[0.3em] uppercase text-xs sm:text-sm font-serif pt-4 animate-fade-in">
         <span className="w-8 sm:w-16 h-[1px] bg-gradient-to-r from-transparent to-gold-400/60" />
-        <span className="flex items-center gap-1.5">
-          <Sparkles size={13} className="text-gold-400 animate-spin-slow" />
+        <span className="flex items-center gap-1.5 font-medium">
           A Special Birthday Tribute
-          <Sparkles size={13} className="text-gold-400 animate-spin-slow" />
         </span>
         <span className="w-8 sm:w-16 h-[1px] bg-gradient-to-l from-transparent to-gold-400/60" />
       </div>
@@ -217,8 +215,8 @@ export const HeroScene: React.FC<HeroSceneProps> = ({
           </div>
 
           {/* Floating badge */}
-          <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 glass-luxury px-4 py-1.5 rounded-full border border-gold-400/40 flex items-center gap-2 shadow-lg backdrop-blur-md">
-            <Sparkles size={14} className="text-gold-400" />
+          <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 glass-luxury px-4 py-1.5 rounded-full border border-gold-400/40 flex items-center gap-1.5 shadow-lg backdrop-blur-md">
+            <Heart size={12} className="fill-red-500/80 text-red-500" />
             <span className="text-xs font-serif text-gold-200 tracking-wider font-semibold">
               The Birthday Star
             </span>
@@ -235,23 +233,6 @@ export const HeroScene: React.FC<HeroSceneProps> = ({
           <InstagramIcon size={16} className="text-gold-400 group-hover:scale-110 transition-transform" />
           <span className="tracking-wider">{PHOTO_CONFIG.instagram}</span>
         </a>
-
-        {/* Animated Reveal Button */}
-        <button
-          onClick={onExploreSurprise}
-          className="mt-8 sm:mt-10 btn-gold px-8 sm:px-10 py-3.5 sm:py-4 rounded-full text-base sm:text-lg font-serif tracking-wider flex items-center gap-3 cursor-pointer group"
-        >
-          <span>Open Your Birthday Surprise</span>
-          <Sparkles size={18} className="text-black group-hover:rotate-45 transition-transform" />
-        </button>
-
-        {/* Smooth scroll indicator */}
-        <div className="mt-12 text-zinc-500 flex flex-col items-center gap-1 animate-bounce opacity-70">
-          <span className="text-[10px] tracking-widest uppercase font-serif text-gold-300/60">
-            Scroll to Journey
-          </span>
-          <ChevronDown size={18} className="text-gold-400/60" />
-        </div>
       </div>
     </div>
   )}

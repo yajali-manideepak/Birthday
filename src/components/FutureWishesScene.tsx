@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Star, Compass, ShieldCheck, Sun, Smile, Gift, Award, Heart } from 'lucide-react';
+import { Compass, ShieldCheck, Sun, Smile, Gift, Award, Heart } from 'lucide-react';
 
 export const FutureWishesScene: React.FC = () => {
   const futureWishes = [
@@ -20,16 +20,16 @@ export const FutureWishesScene: React.FC = () => {
       <div className="max-w-5xl w-full mx-auto text-center">
         {/* Header */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gold-500/10 border border-gold-500/30 text-gold-300 text-xs sm:text-sm font-serif mb-4">
-          <Star size={14} className="text-gold-400 fill-gold-400" />
+          <Heart size={14} className="fill-gold-400 text-gold-400" />
           <span>Blessings for the Journey Ahead</span>
         </div>
 
         <h2 className="text-4xl sm:text-6xl font-cinzel font-bold text-white mb-4">
-          For Your <span className="gold-metallic-text">Future</span> ✨
+          For Your <span className="gold-metallic-text">Future</span>
         </h2>
 
         <p className="text-zinc-400 font-light text-sm sm:text-base max-w-xl mx-auto mb-16">
-          Every blessing sent to the stars, whispering wishes of infinite prosperity, happiness, and peace into your tomorrow.
+          Every blessing sent to the heavens, whispering wishes of infinite prosperity, happiness, and peace into your tomorrow.
         </p>
 
         {/* Future Wishes Constellation Grid */}
@@ -43,10 +43,6 @@ export const FutureWishesScene: React.FC = () => {
                   isLast ? 'md:col-span-2 lg:col-span-3 border-gold-400/60 bg-gradient-to-r from-gold-950/40 via-black/60 to-gold-950/40' : ''
                 }`}
               >
-                {/* Floating gold sparkle icon */}
-                <div className="absolute top-3 right-3 text-gold-400/30 group-hover:text-gold-300 transition-colors">
-                  <Sparkles size={16} />
-                </div>
 
                 <div className="flex items-start gap-4 text-left">
                   <div className="p-3 rounded-xl bg-gold-500/10 border border-gold-500/30 text-gold-300 group-hover:scale-110 transition-transform shrink-0">

@@ -1,4 +1,4 @@
-import { Heart, Sparkles, Image as ImageIcon, ExternalLink, Calendar, MapPin, Coffee, PhoneCall, Bus, BookOpen, Play } from 'lucide-react';
+import { Heart, Image as ImageIcon, ExternalLink, Calendar, MapPin, Coffee, PhoneCall, Bus, BookOpen, Play } from 'lucide-react';
 import { MEMORIES_DATA, PhotoMemory, GalleryPhoto } from '../config/photos';
 
 interface MemoriesSceneProps {

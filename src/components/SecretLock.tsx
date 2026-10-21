@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Lock, Unlock, KeyRound, Sparkles, AlertCircle, HelpCircle } from 'lucide-react';
+import { Lock, KeyRound, AlertCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface SecretLockProps {
@@ -13,7 +13,6 @@ export const SecretLock: React.FC<SecretLockProps> = ({ onUnlock, isUnlocked }) 
   const [pin, setPin] = useState<string>('');
   const [error, setError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [showHint, setShowHint] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const handleDigit = (digit: string) => {
@@ -56,7 +55,7 @@ export const SecretLock: React.FC<SecretLockProps> = ({ onUnlock, isUnlocked }) 
       }, 500);
     } else {
       setError(true);
-      setErrorMessage('Incorrect passcode. Please try again! (Hint: 301206)');
+      setErrorMessage('Incorrect passcode. Please try again.');
       // Brief feedback, clear pin and stop error state so it doesn't get stuck
       setTimeout(() => {
         setPin('');
@@ -82,20 +81,9 @@ export const SecretLock: React.FC<SecretLockProps> = ({ onUnlock, isUnlocked }) 
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [pin, isUnlocked]);
 
+  // When unlocked, remove the lock completely so it doesn't stay visible in the above scroll
   if (isUnlocked) {
-    return (
-      <div className="my-10 p-6 glass-luxury rounded-3xl border border-gold-400/60 shadow-[0_0_40px_rgba(212,175,55,0.3)] max-w-md mx-auto text-center animate-fade-in">
-        <div className="w-14 h-14 mx-auto rounded-full bg-gold-500/20 border border-gold-400/50 flex items-center justify-center text-gold-300 mb-3 shadow-[0_0_25px_rgba(212,175,55,0.5)]">
-          <Unlock size={26} className="text-gold-300" />
-        </div>
-        <h4 className="text-xl font-cinzel font-bold text-white tracking-wide">
-          Passcode Verified ✨
-        </h4>
-        <p className="text-xs font-serif text-gold-300/80 mt-1">
-          Welcome to Stella’s Birthday Universe
-        </p>
-      </div>
-    );
+    return null;
   }
 
   return (
@@ -108,7 +96,6 @@ export const SecretLock: React.FC<SecretLockProps> = ({ onUnlock, isUnlocked }) 
         {/* Header Icon */}
         <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-tr from-gold-600/30 via-gold-400/20 to-transparent border border-gold-400/50 flex items-center justify-center text-gold-300 mb-4 shadow-[0_0_20px_rgba(212,175,55,0.25)] relative group">
           <Lock size={26} className="text-gold-300 group-hover:scale-110 transition-transform" />
-          <Sparkles size={14} className="text-gold-400 absolute top-2 right-2 animate-spin-slow" />
         </div>
 
         {/* Title */}
@@ -200,22 +187,6 @@ export const SecretLock: React.FC<SecretLockProps> = ({ onUnlock, isUnlocked }) 
           </button>
         </div>
 
-        {/* Hint button */}
-        <div className="text-center pt-2 border-t border-gold-500/15">
-          <button
-            onClick={() => setShowHint(!showHint)}
-            className="inline-flex items-center gap-1.5 text-xs text-gold-400/80 hover:text-gold-200 transition-colors"
-          >
-            <HelpCircle size={13} />
-            <span>{showHint ? 'Hide Hint' : 'Need a Hint?'}</span>
-          </button>
-
-          {showHint && (
-            <p className="text-xs text-gold-200/90 font-serif italic mt-2 animate-fade-in">
-              Hint: Stella’s birth date (DDMMYY) — 30 • 12 • 06
-            </p>
-          )}
-        </div>
       </div>
     </div>
   );

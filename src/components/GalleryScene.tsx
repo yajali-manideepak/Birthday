@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Maximize2, Camera } from 'lucide-react';
+import { Heart, Maximize2, Camera } from 'lucide-react';
 import { GALLERY_PHOTOS, GalleryPhoto } from '../config/photos';
 
 interface GallerySceneProps {
@@ -134,7 +134,7 @@ const TiltCard: React.FC<TiltCardProps> = ({ photo, index, onExpand }) => {
         <div className="text-left" style={{ transform: 'translateZ(20px)' }}>
           <div className="flex items-center justify-between text-xs text-gold-400/80 mb-1 font-serif">
             <span>Memory 0{index + 1}</span>
-            <Sparkles size={12} className="text-gold-400 opacity-70" />
+            <Heart size={12} className="text-gold-400/80 fill-gold-400/30" />
           </div>
           <h3 className="text-lg font-serif font-bold text-white group-hover:text-gold-200 transition-colors">
             {photo.title}

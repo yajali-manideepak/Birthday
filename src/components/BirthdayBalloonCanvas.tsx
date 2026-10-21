@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Sparkles, ChevronDown } from 'lucide-react';
 
 interface BirthdayBalloonCanvasProps {
   onScrollToNext?: () => void;
@@ -541,27 +540,13 @@ export const BirthdayBalloonCanvas: React.FC<BirthdayBalloonCanvasProps> = ({
 
       {/* Top subtle badge */}
       <div className="relative z-10 pt-4 px-4 text-center pointer-events-none">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/50 border border-gold-500/20 backdrop-blur-md text-xs sm:text-sm font-serif tracking-[0.25em] text-gold-200/90 uppercase shadow-lg">
-          <Sparkles size={14} className="text-gold-400 animate-spin-slow" />
+        <div className="inline-flex items-center px-5 py-1.5 rounded-full bg-black/50 border border-gold-500/20 backdrop-blur-md text-xs sm:text-sm font-serif tracking-[0.25em] text-gold-200/90 uppercase shadow-lg">
           A Special Birthday Celebration
-          <Sparkles size={14} className="text-gold-400 animate-spin-slow" />
         </div>
       </div>
 
-      {/* Bottom Floating Navigation Controls (Replay removed as requested) */}
-      <div className="relative z-10 pb-6 px-4 flex flex-col items-center gap-3">
-        <button
-          onClick={handleScroll}
-          className="btn-gold px-8 py-3 rounded-full text-xs sm:text-sm font-serif tracking-wider flex items-center gap-2.5 cursor-pointer shadow-2xl group hover:scale-105 transition-all"
-        >
-          <span>Open Your Birthday Surprise</span>
-          <ChevronDown size={17} className="group-hover:translate-y-0.5 transition-transform" />
-        </button>
-
-        <span className="text-[10px] sm:text-xs text-gold-300/60 font-serif tracking-widest uppercase">
-          Scroll down to explore the journey
-        </span>
-      </div>
+      {/* Subtle bottom spacing */}
+      <div className="relative z-10 pb-4 pointer-events-none" />
     </section>
   );
 };

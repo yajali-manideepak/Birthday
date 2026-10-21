@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { X, Sparkles, Video } from 'lucide-react';
+import { X, Heart, Video } from 'lucide-react';
 
 interface LightboxProps {
   isOpen: boolean;
@@ -86,13 +86,11 @@ export const LightboxModal: React.FC<LightboxProps> = ({
           <div className="mt-4 text-center max-w-xl">
             {title && (
               <h4 className="text-xl font-serif text-gold-200 font-medium flex items-center justify-center gap-2">
-                {videoSrc ? (
+                {videoSrc && (
                   <Video size={18} className="text-gold-400" />
-                ) : (
-                  <Sparkles size={16} className="text-gold-400" />
                 )}
                 {title}
-                <Sparkles size={16} className="text-gold-400" />
+                <Heart size={16} className="text-red-500 fill-red-500/80 inline-block" />
               </h4>
             )}
             {caption && (

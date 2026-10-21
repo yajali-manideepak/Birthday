@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Feather, Heart, Sparkles, Mail, MailOpen, Lock, ArrowUpCircle, RotateCcw } from 'lucide-react';
+import { Feather, Heart, Mail, MailOpen, Lock, ArrowUpCircle, RotateCcw } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { synthAudio } from '../utils/soundSynthesizer';
 
@@ -119,8 +119,6 @@ export const LetterScene: React.FC = () => {
                       S
                     </span>
                   </div>
-                  {/* Outer Seal Stamp Details */}
-                  <Sparkles size={14} className="text-gold-300 absolute -top-1 right-1 animate-spin-slow" />
                 </div>
 
                 <div className="mt-4 px-4 py-1.5 rounded-full bg-gold-500/15 border border-gold-400/40 text-gold-200 text-xs font-serif flex items-center gap-2 shadow-lg group-hover:bg-gold-500/25 transition-colors">
@@ -216,7 +214,7 @@ export const LetterScene: React.FC = () => {
             {/* Letter Signoff */}
             <div className="mt-10 pt-6 border-t border-gold-500/20 flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-2 text-xs sm:text-sm text-gold-400 font-serif">
-                <Sparkles size={14} />
+                <Heart size={14} className="fill-red-500/70 text-red-500" />
                 <span>Written with genuine devotion</span>
               </div>
               <div className="font-script text-2xl sm:text-3xl text-gold-300">

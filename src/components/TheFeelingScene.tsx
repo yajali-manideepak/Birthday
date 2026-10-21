@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, Sparkles } from 'lucide-react';
+import { Heart } from 'lucide-react';
 
 export const TheFeelingScene: React.FC = () => {
   const [activeStep, setActiveStep] = useState(0);
