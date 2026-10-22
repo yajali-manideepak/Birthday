@@ -538,13 +538,6 @@ export const BirthdayBalloonCanvas: React.FC<BirthdayBalloonCanvasProps> = ({
         title="Tap to trigger fireworks"
       />
 
-      {/* Top subtle badge */}
-      <div className="relative z-10 pt-4 px-4 text-center pointer-events-none">
-        <div className="inline-flex items-center px-5 py-1.5 rounded-full bg-black/50 border border-gold-500/20 backdrop-blur-md text-xs sm:text-sm font-serif tracking-[0.25em] text-gold-200/90 uppercase shadow-lg">
-          A Special Birthday Celebration
-        </div>
-      </div>
-
       {/* Subtle bottom spacing */}
       <div className="relative z-10 pb-4 pointer-events-none" />
     </section>

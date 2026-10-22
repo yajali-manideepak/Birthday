@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Lock, KeyRound, AlertCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { PHOTO_CONFIG } from '../config/photos';
 
 interface SecretLockProps {
   onUnlock: () => void;
@@ -93,17 +94,33 @@ export const SecretLock: React.FC<SecretLockProps> = ({ onUnlock, isUnlocked }) 
           error ? 'border-red-500/80 shadow-[0_0_30px_rgba(239,68,68,0.4)] animate-shake' : ''
         }`}
       >
-        {/* Header Icon */}
-        <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-tr from-gold-600/30 via-gold-400/20 to-transparent border border-gold-400/50 flex items-center justify-center text-gold-300 mb-4 shadow-[0_0_20px_rgba(212,175,55,0.25)] relative group">
-          <Lock size={26} className="text-gold-300 group-hover:scale-110 transition-transform" />
+        {/* Stella's Profile Avatar with Glowing Gold Frame & Lock Badge */}
+        <div className="relative w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-4 group">
+          {/* Animated Gold Aura */}
+          <div className="absolute -inset-1.5 rounded-full bg-gradient-to-tr from-gold-500 via-amber-400 to-yellow-300 opacity-60 blur-md group-hover:opacity-90 transition-opacity animate-pulse" />
+          
+          {/* Profile Picture Container */}
+          <div className="relative w-full h-full rounded-full p-1 bg-gradient-to-b from-gold-300 via-gold-500 to-amber-700 shadow-2xl overflow-hidden">
+            <img
+              src={PHOTO_CONFIG.heroPhoto}
+              alt="Stella"
+              className="w-full h-full object-cover object-center rounded-full group-hover:scale-105 transition-transform duration-500"
+            />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-t from-black/40 via-transparent to-white/10 pointer-events-none" />
+          </div>
+
+          {/* Luxury Lock Badge on Avatar */}
+          <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-black/90 border border-gold-400 shadow-[0_0_12px_rgba(212,175,55,0.7)] flex items-center justify-center text-gold-300">
+            <Lock size={15} className="text-gold-300" />
+          </div>
         </div>
 
         {/* Title */}
         <h3 className="text-xl sm:text-2xl font-cinzel font-bold text-white tracking-wider text-center">
-          Secret Birthday Passcode
+          Enter the Password
         </h3>
-        <p className="text-xs sm:text-sm text-zinc-400 font-serif text-center mt-1 mb-6">
-          Enter the 6-digit key to unlock Stella's special world
+        <p className="text-xs sm:text-sm text-zinc-300 font-serif text-center mt-1 mb-6">
+          Enter the 6-digit password to unlock Stella's world
         </p>
 
         {/* Hidden input for mobile keyboard focus if needed */}

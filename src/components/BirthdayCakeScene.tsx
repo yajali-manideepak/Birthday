@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Heart, Wind, RotateCcw, Cake, Check, Flame } from 'lucide-react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { Heart, Wind, RotateCcw, Cake, Check, Sparkles, Wand2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { synthAudio } from '../utils/soundSynthesizer';
 
@@ -11,7 +11,7 @@ interface SliceDedication {
 }
 
 const SLICE_DEDICATIONS: SliceDedication[] = [
-  { id: 0, label: "Slice 01", recipient: "For The Birthday Queen Stella 👑", detail: "The sweetest first bite for the star of today." },
+  { id: 0, label: "Slice 01", recipient: "For Dearest Stella 💖", detail: "The sweetest first bite for the star of today." },
   { id: 1, label: "Slice 02", recipient: "With Love For Mom & Dad ❤️", detail: "A slice of endless gratitude and warmth." },
   { id: 2, label: "Slice 03", recipient: "For Lifelong Friends & Memories ✨", detail: "To all the shared laughs, bus rides, and smiles." },
   { id: 3, label: "Slice 04", recipient: "For Bright Success & Future Dreams 🌟", detail: "May every ambition and goal become reality." },
@@ -29,10 +29,19 @@ export const BirthdayCakeScene: React.FC = () => {
   const [activeCuttingIndex, setActiveCuttingIndex] = useState<number | null>(null);
   const [justServedIndex, setJustServedIndex] = useState<number | null>(null);
 
+  // Interactive Knife Holding & Dragging State
+  const [isHoldingKnife, setIsHoldingKnife] = useState<boolean>(false);
+  const [isDraggingKnife, setIsDraggingKnife] = useState<boolean>(false);
+  const [knifePos, setKnifePos] = useState<{ x: number; y: number }>({ x: 200, y: 100 });
+  const [sliceProgress, setSliceProgress] = useState<number>(0);
+  const [dragStartPos, setDragStartPos] = useState<{ x: number; y: number } | null>(null);
+  const [isCinematicCutting, setIsCinematicCutting] = useState<boolean>(false);
+
+  const cakeContainerRef = useRef<HTMLDivElement | null>(null);
   const confettiAnimRef = useRef<number | null>(null);
 
   const fireGoldenConfetti = () => {
-    const duration = 2500;
+    const duration = 2200;
     const end = Date.now() + duration;
     const colors = ['#D4AF37', '#FFD700', '#FFFFFF', '#F59E0B', '#FF4B72'];
 
@@ -41,14 +50,14 @@ export const BirthdayCakeScene: React.FC = () => {
         particleCount: 6,
         angle: 60,
         spread: 55,
-        origin: { x: 0.1, y: 0.75 },
+        origin: { x: 0.15, y: 0.75 },
         colors,
       });
       confetti({
         particleCount: 6,
         angle: 120,
         spread: 55,
-        origin: { x: 0.9, y: 0.75 },
+        origin: { x: 0.85, y: 0.75 },
         colors,
       });
 
@@ -93,12 +102,35 @@ export const BirthdayCakeScene: React.FC = () => {
     synthAudio.playChime();
   };
 
-  // Cut next available slice or a specific slice
+  // Core execution to cut a slice
+  const executeCutSlice = useCallback((sliceToCut: number) => {
+    if (cutSlices.includes(sliceToCut)) return;
+
+    setActiveCuttingIndex(sliceToCut);
+    synthAudio.playSlice();
+
+    // Slicing sound & animation progression
+    setTimeout(() => {
+      setCutSlices((prev) => [...prev, sliceToCut]);
+      setJustServedIndex(sliceToCut);
+      setActiveCuttingIndex(null);
+      setIsDraggingKnife(false);
+      setDragStartPos(null);
+      setSliceProgress(0);
+      setIsCinematicCutting(false);
+
+      // Celebration confetti on first slice and completion
+      if (cutSlices.length === 0 || cutSlices.length === 5) {
+        fireGoldenConfetti();
+      }
+    }, 750);
+  }, [cutSlices]);
+
+  // Cut next available slice or target slice with knife animation
   const handleCutSlice = (targetSlice?: number) => {
-    if (activeCuttingIndex !== null) return;
+    if (activeCuttingIndex !== null || isCinematicCutting) return;
     if (cutSlices.length >= 6) return;
 
-    // Determine which slice to cut
     let sliceToCut = targetSlice;
     if (sliceToCut === undefined || cutSlices.includes(sliceToCut)) {
       for (let i = 0; i < 6; i++) {
@@ -111,20 +143,90 @@ export const BirthdayCakeScene: React.FC = () => {
 
     if (sliceToCut === undefined) return;
 
-    setActiveCuttingIndex(sliceToCut);
-    synthAudio.playSlice();
+    // Trigger full holding & dragging knife animation sequence
+    setIsHoldingKnife(true);
+    setIsCinematicCutting(true);
+    
+    // Animate knife descending and dragging across slice
+    const container = cakeContainerRef.current;
+    const rect = container?.getBoundingClientRect();
+    const centerX = rect ? rect.width / 2 : 200;
+    const centerY = rect ? rect.height / 2 : 120;
 
+    setKnifePos({ x: centerX - 60, y: centerY - 70 });
+    
+    // Step 1: Holding knife above slice
     setTimeout(() => {
-      setCutSlices((prev) => [...prev, sliceToCut!]);
-      setJustServedIndex(sliceToCut!);
-      setActiveCuttingIndex(null);
-      synthAudio.playPop();
+      setKnifePos({ x: centerX + 10, y: centerY + 20 });
+      synthAudio.playSlice();
+      setSliceProgress(50);
+    }, 250);
 
-      // Confetti on first slice or all slices completed
-      if (cutSlices.length === 0 || cutSlices.length === 5) {
-        fireGoldenConfetti();
+    // Step 2: Dragging knife downwards to complete cut
+    setTimeout(() => {
+      setKnifePos({ x: centerX + 50, y: centerY + 70 });
+      setSliceProgress(100);
+      executeCutSlice(sliceToCut!);
+    }, 550);
+  };
+
+  // Interactive Dragging on Cake Viewport
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (cutSlices.length >= 6 || activeCuttingIndex !== null) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    setIsHoldingKnife(true);
+    setIsDraggingKnife(true);
+    setDragStartPos({ x, y });
+    setKnifePos({ x, y });
+    setSliceProgress(0);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isHoldingKnife && !isDraggingKnife) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    setKnifePos({ x, y });
+
+    if (isDraggingKnife && dragStartPos) {
+      const dist = Math.hypot(x - dragStartPos.x, y - dragStartPos.y);
+      const progress = Math.min(100, Math.floor((dist / 90) * 100));
+      setSliceProgress(progress);
+
+      // If dragged sufficiently across the cake (drag threshold reached)
+      if (progress >= 95 && activeCuttingIndex === null) {
+        // Find next uncut slice
+        let nextSlice = 0;
+        for (let i = 0; i < 6; i++) {
+          if (!cutSlices.includes(i)) {
+            nextSlice = i;
+            break;
+          }
+        }
+        executeCutSlice(nextSlice);
       }
-    }, 600);
+    }
+  };
+
+  const handlePointerUp = () => {
+    if (isDraggingKnife && sliceProgress > 45 && activeCuttingIndex === null) {
+      let nextSlice = 0;
+      for (let i = 0; i < 6; i++) {
+        if (!cutSlices.includes(i)) {
+          nextSlice = i;
+          break;
+        }
+      }
+      executeCutSlice(nextSlice);
+    } else {
+      setIsDraggingKnife(false);
+      setDragStartPos(null);
+      setSliceProgress(0);
+    }
   };
 
   // Reset/Bake cake again
@@ -133,6 +235,9 @@ export const BirthdayCakeScene: React.FC = () => {
     setActiveCuttingIndex(null);
     setJustServedIndex(null);
     setCandlesLit(true);
+    setIsHoldingKnife(false);
+    setIsDraggingKnife(false);
+    setSliceProgress(0);
     synthAudio.playChime();
   };
 
@@ -140,8 +245,7 @@ export const BirthdayCakeScene: React.FC = () => {
   const remainingCount = totalSlices - cutSlices.length;
   const isCakeEmpty = remainingCount === 0;
 
-  // 3D Isometric Slice Geometry Generator
-  // Center is (170, 110), rx = 135, ry = 60, height = 75
+  // 3D Isometric Slice Geometry
   const cx = 170;
   const cy = 110;
   const rx = 135;
@@ -152,8 +256,6 @@ export const BirthdayCakeScene: React.FC = () => {
     const isCut = cutSlices.includes(idx);
     const isBeingCut = activeCuttingIndex === idx;
 
-    // Angles for this slice in radians (6 slices = 60 deg each)
-    // Offset slightly so front slices look dramatic in 3D
     const startDeg = idx * 60 - 30;
     const endDeg = (idx + 1) * 60 - 30;
     const startRad = (startDeg * Math.PI) / 180;
@@ -165,34 +267,34 @@ export const BirthdayCakeScene: React.FC = () => {
     const x2 = cx + rx * Math.cos(endRad);
     const y2 = cy + ry * Math.sin(endRad);
 
-    // Decorative strawberry and cream rosette coordinates on top of slice
     const decorX = cx + rx * 0.72 * Math.cos(midRad);
     const decorY = cy + ry * 0.72 * Math.sin(midRad);
 
-    // If slice is cut, we don't render it on the cake! It's deleted/removed from the cake!
     if (isCut) return null;
 
-    // Check if this slice is facing front (between 0 and 180 deg) so front side wall is rendered
-    const midDeg = (startDeg + endDeg) / 2;
     const isFrontFacing = Math.sin(midRad) > -0.2;
 
-    // Slice translation when cutting
-    const shiftX = isBeingCut ? Math.cos(midRad) * 22 : 0;
-    const shiftY = isBeingCut ? Math.sin(midRad) * 14 - 15 : 0;
+    // Slice translation when cutting: dynamic lifting & separating motion
+    const shiftX = isBeingCut ? Math.cos(midRad) * 32 : 0;
+    const shiftY = isBeingCut ? Math.sin(midRad) * 20 - 25 : 0;
+    const scaleFactor = isBeingCut ? 1.05 : 1;
 
     return (
       <g
         key={idx}
-        className="cursor-pointer transition-transform duration-500 hover:brightness-110"
-        onClick={() => handleCutSlice(idx)}
+        className="cursor-pointer transition-all duration-500 hover:brightness-110"
+        onClick={(e) => {
+          e.stopPropagation();
+          handleCutSlice(idx);
+        }}
         style={{
-          transform: `translate(${shiftX}px, ${shiftY}px)`,
-          transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+          transform: `translate(${shiftX}px, ${shiftY}px) scale(${scaleFactor})`,
+          transition: 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
-        <title>{`Slice ${idx + 1} • Click to cut & serve!`}</title>
-        {/* INNER CUT SECTION: Left Face (from center to start angle) */}
-        {/* Rendered if previous slice (idx - 1) is already cut or being cut */}
+        <title>{`Slice ${idx + 1} • Click or drag knife to cut & serve!`}</title>
+        
+        {/* INNER CUT SECTION: Left Face */}
         {(cutSlices.includes((idx + 5) % 6) || isBeingCut) && (
           <path
             d={`M ${cx} ${cy} L ${x1} ${y1} L ${x1} ${y1 + cakeH} L ${cx} ${cy + cakeH} Z`}
@@ -202,8 +304,7 @@ export const BirthdayCakeScene: React.FC = () => {
           />
         )}
 
-        {/* INNER CUT SECTION: Right Face (from center to end angle) */}
-        {/* Rendered if next slice (idx + 1) is already cut or being cut */}
+        {/* INNER CUT SECTION: Right Face */}
         {(cutSlices.includes((idx + 1) % 6) || isBeingCut) && (
           <path
             d={`M ${cx} ${cy} L ${x2} ${y2} L ${x2} ${y2 + cakeH} L ${cx} ${cy + cakeH} Z`}
@@ -231,7 +332,7 @@ export const BirthdayCakeScene: React.FC = () => {
           </g>
         )}
 
-        {/* TOP FACE OF SLICE (Rich chocolate velvet frosting sector) */}
+        {/* TOP FACE OF SLICE */}
         <path
           d={`M ${cx} ${cy} L ${x1} ${y1} A ${rx} ${ry} 0 0 1 ${x2} ${y2} Z`}
           fill="url(#frostingTopGrad)"
@@ -264,11 +365,9 @@ export const BirthdayCakeScene: React.FC = () => {
             strokeWidth="0.5"
             filter="drop-shadow(0 2px 2px rgba(0,0,0,0.3))"
           />
-          {/* Strawberry seeds & shine */}
           <circle cx="-1.5" cy="-2" r="0.6" fill="#fef08a" />
           <circle cx="1.5" cy="-1" r="0.6" fill="#fef08a" />
           <circle cx="0" cy="2" r="0.6" fill="#fef08a" />
-          {/* Green leaf cap */}
           <path d="M 0 -7 L -2 -9 L 0 -8 L 2 -9 Z" fill="#15803d" />
         </g>
       </g>
@@ -284,7 +383,7 @@ export const BirthdayCakeScene: React.FC = () => {
         {/* Badge Header */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gold-500/10 border border-gold-500/30 text-gold-300 text-xs sm:text-sm font-serif mb-4 animate-fade-in">
           <Cake size={15} className="text-gold-400" />
-          <span>The Birthday Cake Celebration</span>
+          <span>Interactive Cake Cutting Ritual</span>
         </div>
 
         {/* Section Heading */}
@@ -293,14 +392,14 @@ export const BirthdayCakeScene: React.FC = () => {
         </h2>
 
         <p className="text-zinc-300 font-light text-sm sm:text-base max-w-2xl mx-auto mb-10 leading-relaxed">
-          Blow out the golden celebration candle, then cut slice by slice to serve Stella and everyone! Watch each cut slice transfer straight to the serving platter.
+          Hold and drag the golden knife across the cake to slice and serve Stella! Watch each cut slice transfer gracefully straight to the dessert platter.
         </p>
 
         {/* MAIN DUAL STAGE: 3D CAKE STAND ON LEFT + SERVING PLATTER ON RIGHT */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full max-w-5xl items-center">
           
           {/* =========================================================================
-              LEFT COLUMN: THE 3D INTERACTIVE CAKE
+              LEFT COLUMN: THE 3D INTERACTIVE CAKE WITH KNIFE HOLDING & DRAGGING
               ========================================================================= */}
           <div className="lg:col-span-7 flex flex-col items-center">
             <div className="relative w-full max-w-md sm:max-w-lg p-6 sm:p-8 rounded-3xl glass-luxury border border-gold-400/30 shadow-[0_20px_50px_rgba(0,0,0,0.85)] flex flex-col items-center">
@@ -325,8 +424,16 @@ export const BirthdayCakeScene: React.FC = () => {
                 )}
               </div>
 
-              {/* SVG 3D CAKE VIEWPORT */}
-              <div className="relative w-full aspect-[4/3] flex items-center justify-center">
+              {/* INTERACTIVE CAKE VIEWPORT WITH DRAGGING & KNIFE HOLDING */}
+              <div
+                ref={cakeContainerRef}
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                className={`relative w-full aspect-[4/3] flex items-center justify-center rounded-2xl overflow-hidden touch-none select-none ${
+                  isHoldingKnife ? 'cursor-crosshair' : 'cursor-pointer'
+                }`}
+              >
                 <svg
                   viewBox="0 0 340 260"
                   className="w-full h-full max-w-[360px] overflow-visible drop-shadow-[0_25px_35px_rgba(0,0,0,0.8)]"
@@ -352,10 +459,10 @@ export const BirthdayCakeScene: React.FC = () => {
                     <linearGradient id="spongeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
                       <stop offset="0%" stopColor="#3e2723" />
                       <stop offset="15%" stopColor="#8d6e63" />
-                      <stop offset="22%" stopColor="#fff8e7" />{/* Cream stripe */}
+                      <stop offset="22%" stopColor="#fff8e7" />
                       <stop offset="30%" stopColor="#795548" />
-                      <stop offset="50%" stopColor="#e11d48" />{/* Berry jam stripe */}
-                      <stop offset="58%" stopColor="#fff8e7" />{/* Cream stripe */}
+                      <stop offset="50%" stopColor="#e11d48" />
+                      <stop offset="58%" stopColor="#fff8e7" />
                       <stop offset="70%" stopColor="#6d4c41" />
                       <stop offset="100%" stopColor="#3e2723" />
                     </linearGradient>
@@ -368,27 +475,30 @@ export const BirthdayCakeScene: React.FC = () => {
                       <stop offset="70%" stopColor="#e5c158" />
                       <stop offset="100%" stopColor="#895b1b" />
                     </linearGradient>
+
+                    {/* Knife Blade Gleam Gradient */}
+                    <linearGradient id="knifeBladeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#ffffff" />
+                      <stop offset="30%" stopColor="#e2e8f0" />
+                      <stop offset="70%" stopColor="#94a3b8" />
+                      <stop offset="100%" stopColor="#d4af37" />
+                    </linearGradient>
                   </defs>
 
                   {/* 1. LUXURY GOLD/SILVER CAKE PEDESTAL STAND */}
                   <g>
-                    {/* Stand base ellipse */}
                     <ellipse cx={cx} cy={cy + cakeH + 35} rx={rx * 0.75} ry={ry * 0.55} fill="url(#goldStandGrad)" opacity="0.9" />
-                    {/* Stand pillar */}
                     <path
                       d={`M ${cx - 24} ${cy + cakeH + 10} L ${cx - 16} ${cy + cakeH + 34} L ${cx + 16} ${cy + cakeH + 34} L ${cx + 24} ${cy + cakeH + 10} Z`}
                       fill="url(#goldStandGrad)"
                     />
-                    {/* Platter top plate rim */}
                     <ellipse cx={cx} cy={cy + cakeH + 10} rx={rx + 16} ry={ry + 10} fill="url(#goldStandGrad)" filter="drop-shadow(0 4px 10px rgba(0,0,0,0.5))" />
-                    {/* Inner porcelain plate base */}
                     <ellipse cx={cx} cy={cy + cakeH + 7} rx={rx + 10} ry={ry + 7} fill="#1a1520" stroke="#d4af37" strokeWidth="1" />
                   </g>
 
-                  {/* EMPTY CAKE CRUMBS (When cake is eaten/cut) */}
+                  {/* EMPTY CAKE CRUMBS */}
                   {isCakeEmpty ? (
                     <g className="animate-fade-in">
-                      {/* Leftover crumbs */}
                       <circle cx={cx - 30} cy={cy + cakeH + 4} r="2.5" fill="#8d6e63" />
                       <circle cx={cx - 15} cy={cy + cakeH + 7} r="1.8" fill="#e11d48" />
                       <circle cx={cx + 20} cy={cy + cakeH + 2} r="2.2" fill="#fff8e7" />
@@ -411,22 +521,21 @@ export const BirthdayCakeScene: React.FC = () => {
                   ) : (
                     /* 2. THE 6 3D CAKE SLICES */
                     <g>
-                      {/* Render order: back slices first (idx: 3, 2, 4, 1, 5, 0) for correct 3D overlap */}
                       {[3, 2, 4, 1, 5, 0].map((idx) => renderSlice(idx))}
                     </g>
                   )}
 
-                  {/* 3. CENTER CANDLE & FLAME (Only rendered if cake has at least 1 slice) */}
+                  {/* 3. CENTER CANDLE & FLAME */}
                   {!isCakeEmpty && (
                     <g
                       transform={`translate(${cx}, ${cy - 12})`}
                       className="cursor-pointer"
-                      onClick={handleCandleClick}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCandleClick();
+                      }}
                     >
-                      {/* Candle Wick */}
                       <line x1="0" y1="-32" x2="0" y2="-40" stroke="#221815" strokeWidth="1.8" strokeLinecap="round" />
-
-                      {/* Candle Body */}
                       <rect
                         x="-4.5"
                         y="-32"
@@ -437,25 +546,19 @@ export const BirthdayCakeScene: React.FC = () => {
                         stroke="#e2e8f0"
                         strokeWidth="0.8"
                       />
-                      {/* Gold candle spiral stripe */}
                       <path d="M -4.5 -26 Q 0 -22 4.5 -25 L 4.5 -19 Q 0 -16 -4.5 -20 Z" fill="#d4af37" opacity="0.8" />
                       <path d="M -4.5 -13 Q 0 -9 4.5 -12 L 4.5 -6 Q 0 -3 -4.5 -7 Z" fill="#d4af37" opacity="0.8" />
 
-                      {/* Candle Flame (Flickering) */}
                       {candlesLit ? (
                         <g transform="translate(0, -42)" className="animate-flame-flicker origin-bottom">
-                          {/* Flame Aura */}
                           <circle cx="0" cy="-6" r="14" fill="#f59e0b" opacity="0.3" filter="blur(4px)" />
-                          {/* Outer Yellow Flame */}
                           <path
                             d="M 0 -18 C 5 -12 7 -4 4 2 C 2 5 -2 5 -4 2 C -7 -4 -5 -12 0 -18 Z"
                             fill="url(#flameGrad)"
                           />
-                          {/* Inner White Hot Core */}
                           <ellipse cx="0" cy="-2" rx="2" ry="4" fill="#ffffff" />
                         </g>
                       ) : (
-                        /* Smoke wisps when blown out */
                         smokeActive && (
                           <g transform="translate(0, -44)" className="animate-smoke-rise">
                             <path
@@ -472,6 +575,27 @@ export const BirthdayCakeScene: React.FC = () => {
                     </g>
                   )}
 
+                  {/* Slicing Laser Beam & Sparks when Cutting/Dragging */}
+                  {(activeCuttingIndex !== null || isDraggingKnife) && (
+                    <g>
+                      {/* Dynamic Slicing Line with Golden Energy Glow */}
+                      <line
+                        x1={cx}
+                        y1={cy}
+                        x2={cx + 60}
+                        y2={cy + 55}
+                        stroke="#faef82"
+                        strokeWidth="3.5"
+                        strokeLinecap="round"
+                        filter="drop-shadow(0 0 10px #ffd700)"
+                        className="animate-pulse"
+                      />
+                      {/* Sparks at blade contact */}
+                      <circle cx={cx + 30} cy={cy + 25} r="3" fill="#ffffff" filter="drop-shadow(0 0 6px #fff)" />
+                      <circle cx={cx + 45} cy={cy + 40} r="2" fill="#ffd700" />
+                    </g>
+                  )}
+
                   <defs>
                     <linearGradient id="flameGrad" x1="0%" y1="100%" x2="0%" y2="0%">
                       <stop offset="0%" stopColor="#ef4444" />
@@ -482,16 +606,73 @@ export const BirthdayCakeScene: React.FC = () => {
                   </defs>
                 </svg>
 
-                {/* Slicing Knife Animation Overlay */}
-                {activeCuttingIndex !== null && (
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
-                    <div className="w-1.5 h-36 bg-gradient-to-b from-transparent via-gold-200 to-gold-500 shadow-[0_0_25px_#ffd700] transform -rotate-12 animate-pulse" />
+                {/* =====================================================================
+                    REALISTIC HELD KNIFE GRAPHIC & DRAG ANIMATION OVERLAY
+                    ===================================================================== */}
+                {(isHoldingKnife || activeCuttingIndex !== null) && !isCakeEmpty && (
+                  <div
+                    className="absolute pointer-events-none transition-all duration-75 z-30"
+                    style={{
+                      left: `${knifePos.x}px`,
+                      top: `${knifePos.y}px`,
+                      transform: 'translate(-30%, -70%)',
+                    }}
+                  >
+                    {/* Golden Handheld Chef Knife */}
+                    <div className="relative filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]">
+                      {/* Glow aura while holding knife */}
+                      <div className="absolute -inset-2 bg-gradient-to-r from-gold-400/30 to-amber-500/20 rounded-full blur-md animate-pulse" />
+                      
+                      <svg width="120" height="90" viewBox="0 0 120 90" className="overflow-visible transform -rotate-[35deg]">
+                        {/* Blade */}
+                        <path
+                          d="M 25 35 L 95 32 Q 105 38 112 52 L 25 45 Z"
+                          fill="url(#knifeBladeGrad)"
+                          stroke="#cbd5e1"
+                          strokeWidth="1.2"
+                          filter="drop-shadow(0 2px 5px rgba(0,0,0,0.4))"
+                        />
+                        {/* Blade spine highlight */}
+                        <line x1="25" y1="35" x2="95" y2="32" stroke="#ffffff" strokeWidth="1.5" />
+                        
+                        {/* Sharp cutting edge sheen */}
+                        <path d="M 28 44 Q 65 42 110 51" stroke="#fff" strokeWidth="1" strokeDasharray="4 2" />
+
+                        {/* Knife Bolster (Gold Collar) */}
+                        <rect x="20" y="32" width="6" height="16" rx="2" fill="#d4af37" stroke="#aa771c" strokeWidth="0.8" />
+                        
+                        {/* Handle (Ebony & Gold Rivets) */}
+                        <rect x="-18" y="34" width="38" height="12" rx="4" fill="#1e1b18" stroke="#d4af37" strokeWidth="1" />
+                        {/* Handle rivets */}
+                        <circle cx="-10" cy="40" r="1.8" fill="#d4af37" />
+                        <circle cx="0" cy="40" r="1.8" fill="#d4af37" />
+                        <circle cx="10" cy="40" r="1.8" fill="#d4af37" />
+
+                        {/* Hand grip indication / sparkling blade tip */}
+                        <circle cx="112" cy="52" r="3" fill="#ffffff" filter="drop-shadow(0 0 8px #faef82)" className="animate-ping" />
+                      </svg>
+
+                      {/* Holding Tag Indicator */}
+                      <div className="absolute -top-7 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-black/80 border border-gold-400/60 text-[10px] font-serif text-gold-200 tracking-wider whitespace-nowrap shadow-md">
+                        {isDraggingKnife ? "Dragging Knife to Cut ✨" : "Holding Knife 🗡️"}
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
 
+              {/* Slicing Progress Bar during drag */}
+              {isDraggingKnife && (
+                <div className="w-full max-w-xs mt-2 bg-black/50 rounded-full h-2 border border-gold-500/30 overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-gold-400 to-amber-300 transition-all duration-75 shadow-[0_0_8px_#ffd700]"
+                    style={{ width: `${sliceProgress}%` }}
+                  />
+                </div>
+              )}
+
               {/* Interactive Slicing Buttons Below Cake */}
-              <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+              <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
                 {candlesLit ? (
                   <button
                     onClick={handleCandleClick}
@@ -503,14 +684,30 @@ export const BirthdayCakeScene: React.FC = () => {
                 ) : null}
 
                 {!isCakeEmpty ? (
-                  <button
-                    onClick={() => handleCutSlice()}
-                    disabled={activeCuttingIndex !== null}
-                    className="btn-gold px-7 py-3 rounded-full text-sm sm:text-base font-serif tracking-wider flex items-center gap-2.5 shadow-xl hover:scale-105 active:scale-95 transition-all cursor-pointer font-bold"
-                  >
-                    <Cake size={17} />
-                    <span>Cut Slice #{cutSlices.length + 1} 🍰</span>
-                  </button>
+                  <>
+                    {/* Primary Button: Hold & Drag Knife to Cut */}
+                    <button
+                      onClick={() => handleCutSlice()}
+                      disabled={activeCuttingIndex !== null || isCinematicCutting}
+                      className="btn-gold px-7 py-3 rounded-full text-sm sm:text-base font-serif tracking-wider flex items-center gap-2.5 shadow-xl hover:scale-105 active:scale-95 transition-all cursor-pointer font-bold"
+                    >
+                      <Cake size={17} />
+                      <span>{isCinematicCutting ? "Cutting Slice..." : `Cut Slice #${cutSlices.length + 1} with Knife 🍰`}</span>
+                    </button>
+
+                    {/* Toggle Holding Knife Mode */}
+                    <button
+                      onClick={() => setIsHoldingKnife(!isHoldingKnife)}
+                      className={`px-4 py-2 rounded-full text-xs font-serif tracking-wider border transition-all cursor-pointer flex items-center gap-1.5 ${
+                        isHoldingKnife
+                          ? 'bg-gold-500/20 border-gold-400 text-gold-200 shadow-[0_0_15px_rgba(212,175,55,0.4)]'
+                          : 'bg-black/40 border-gold-500/20 text-zinc-400 hover:text-white'
+                      }`}
+                    >
+                      <Wand2 size={13} className={isHoldingKnife ? 'text-gold-300' : ''} />
+                      <span>{isHoldingKnife ? "Knife Held in Hand 🗡️" : "Hold Knife Directly 🗡️"}</span>
+                    </button>
+                  </>
                 ) : (
                   <button
                     onClick={handleResetCake}
@@ -522,10 +719,11 @@ export const BirthdayCakeScene: React.FC = () => {
                 )}
               </div>
 
+              {/* Helpful UX instruction hint */}
               <span className="text-[11px] font-serif text-zinc-400 mt-3 block">
                 {isCakeEmpty
-                  ? "🎉 Every slice has been placed on the serving platter!"
-                  : "Tip: Tap 'Cut Slice' or click any slice directly on the cake to cut and serve it!"}
+                  ? "🎉 Every slice has been placed on the dessert serving platter!"
+                  : "Tip: Click 'Cut Slice with Knife', or click and drag across the cake with your knife to cut slice by slice!"}
               </span>
             </div>
           </div>
@@ -565,10 +763,10 @@ export const BirthdayCakeScene: React.FC = () => {
                       <Cake size={24} />
                     </div>
                     <p className="font-serif italic text-sm text-zinc-300">
-                      "Cut a slice from the cake to place it here on the serving plate..."
+                      "Cut a slice from the cake using the knife to place it here on the serving plate..."
                     </p>
                     <span className="text-[11px] font-sans text-gold-400/80 mt-2">
-                      Ready for the Birthday Star Stella!
+                      Ready for Stella!
                     </span>
                   </div>
                 ) : (
@@ -589,7 +787,6 @@ export const BirthdayCakeScene: React.FC = () => {
                           {/* Mini Realistic Cake Slice Icon */}
                           <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#6d4c41] to-[#3e2723] border border-gold-400/40 flex items-center justify-center shrink-0 shadow-md relative">
                             <span className="text-base select-none">🍰</span>
-                            {/* Little fresh strawberry badge */}
                             <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-rose-600 border border-white/40" />
                           </div>
 
