@@ -70,36 +70,8 @@ class RomanticAudioSynthesizer {
   }
 
   public start() {
-    this.initContext();
-    if (this.isPlaying || !this.ctx || !this.masterGain) return;
-    this.isPlaying = true;
-
-    // Smooth fade in
-    this.masterGain.gain.setValueAtTime(0, this.ctx.currentTime);
-    this.masterGain.gain.linearRampToValueAtTime(this.volume, this.ctx.currentTime + 2.0);
-
-    const stepChord = () => {
-      if (!this.isPlaying || !this.ctx) return;
-      const now = this.ctx.currentTime;
-      const chord = this.chords[this.currentChordIdx];
-
-      // Arpeggiate notes gently
-      chord.forEach((note, index) => {
-        const noteDelay = index * 0.35 + (Math.random() * 0.08);
-        this.playPluck(note, now + noteDelay, 4.2, 0.12);
-      });
-
-      // Extra shimmering high bell note
-      if (Math.random() > 0.3) {
-        const highNote = chord[chord.length - 1] * 2;
-        this.playPluck(highNote, now + 1.6, 2.5, 0.05);
-      }
-
-      this.currentChordIdx = (this.currentChordIdx + 1) % this.chords.length;
-    };
-
-    stepChord();
-    this.intervalId = setInterval(stepChord, 3800);
+    // Background music disabled
+    return;
   }
 
   public stop() {

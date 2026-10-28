@@ -1,0 +1,252 @@
+[
+  {
+    "file": "dist/index.html",
+    "size": 6603,
+    "sha256": "23e5c8ea4a759bd7a43f1c82eed413a2e0be76c8a0eb94a284bec00f6b980f5d"
+  },
+  {
+    "file": "dist/style.css",
+    "size": 11165,
+    "sha256": "f577c3dbd49ee8ac23059e15b32c98be2f74ddfa4f35d88127184cda30872de9"
+  },
+  {
+    "file": "dist/game.js",
+    "size": 21441,
+    "sha256": "bfde7c1b0e8aa7d2c358be9c8d7b8c959f6fba0597289ff09d2e60781e03d030"
+  },
+  {
+    "file": "dist/humans.js",
+    "size": 4763,
+    "sha256": "1153a96403cbeccb2a57cf579fdac1ed3f6434fef943d1937b97a5f7e77077ce"
+  },
+  {
+    "file": "dist/game.css",
+    "size": 6020,
+    "sha256": "a7d7df0cf1efd55bb938bbca396394ca5e5011e1d94282939f76a8aadd8d55c3"
+  },
+  {
+    "file": "dist/three.module.js",
+    "size": 1314681,
+    "sha256": "ce1fa418de16a19495a9f72495580e3015d7745c296d3ce0485897f902ddedfb"
+  },
+  {
+    "file": "dist/venue.js",
+    "size": 18076,
+    "sha256": "faab7649cc99582dcea9449857a15f3b2c1faacc439f6d23bff3d0158ab1390a"
+  },
+  {
+    "file": "dist/navigation.js",
+    "size": 2592,
+    "sha256": "8efd96c69cbe84f65e8167defd988cca5e7b0f8980f5b48635f51f10f770c163"
+  },
+  {
+    "file": "dist/THREE-LICENSE.txt",
+    "size": 1081,
+    "sha256": "4c40a1ef62450b857c3b2aaf294936304cd552d965fbcd9d32d4c5bcf4ba4454"
+  },
+  {
+    "file": "dist/addons/loaders/FBXLoader.js",
+    "size": 103011,
+    "sha256": "a7c797e0ca34fe28f71c8be8505a73aca1cfdf273d2e03bda4b03d73921f4ab6"
+  },
+  {
+    "file": "dist/addons/curves/NURBSUtils.js",
+    "size": 9166,
+    "sha256": "a0b2739ccde793b4924eb00a2f3cc96edfc9474b645750c3a52f3516174de2dc"
+  },
+  {
+    "file": "dist/addons/curves/NURBSCurve.js",
+    "size": 2550,
+    "sha256": "63a68c18358c37c402b9d9c70c7eb1e90babfc1df233a9215b898ee4e6f8bd57"
+  },
+  {
+    "file": "dist/addons/utils/SkeletonUtils.js",
+    "size": 8818,
+    "sha256": "12fa2b92adcf9bf52b62b724e2a9ae3fab2d4aafa5210ef8584f1b060172300a"
+  },
+  {
+    "file": "dist/addons/loaders/TGALoader.js",
+    "size": 11166,
+    "sha256": "b010936d35f87851da0ad92d762deb6b907b4e620f226354d692e92a6c6b58dd"
+  },
+  {
+    "file": "dist/addons/libs/fflate.module.js",
+    "size": 89384,
+    "sha256": "209a4412eb48ce609edb4391992a792ffcc3983d30ee7e2b0b89a8c470f3cd8a"
+  },
+  {
+    "file": "dist/assets/female.fbx",
+    "size": 612192,
+    "sha256": "713d79f1bf21e20e9c1e9ec4ed4d421c84c0466dfdeebf59d47af81b71b8ca88"
+  },
+  {
+    "file": "dist/assets/male.fbx",
+    "size": 548576,
+    "sha256": "537284add0fb8bd3bf9dd9459cba2c6d4d34de50b86dfdfef09c2c57cbf1a878"
+  },
+  {
+    "file": "dist/assets/guest-female.fbx",
+    "size": 594640,
+    "sha256": "cf857fe04595edee9174caaf3f0d18dd5d5cc4d0702c8851f2cc413dd8cfea9e"
+  },
+  {
+    "file": "dist/assets/guest-male.fbx",
+    "size": 571296,
+    "sha256": "fe0d026bc59e7d7ea8f4049edf77ee8040e050224b44a10fb4727b9b3d6efba0"
+  },
+  {
+    "file": "dist/assets/textures/f011_head_specular.png",
+    "size": 662117,
+    "sha256": "4ee5c99f315ba0d13241fd3e57c05bd562c27e2f959e0e1609d29e0701ea6076"
+  },
+  {
+    "file": "dist/assets/textures/f011_body_normal.png",
+    "size": 1705096,
+    "sha256": "fe0c8931b8fff6ad2eef49115435d4e467ba7b460c1209e7f84399e95a34b244"
+  },
+  {
+    "file": "dist/assets/textures/f011_body_specular.png",
+    "size": 591878,
+    "sha256": "12b30df1d1defaab42c235d3e46ab3942096e38115408a1b973042935d55cf5a"
+  },
+  {
+    "file": "dist/assets/textures/f011_body_color.png",
+    "size": 1793657,
+    "sha256": "ed9f28e17d91a8a2d862b6232afa68eacff0d0758f21d55b47ffceef10fd6e30"
+  },
+  {
+    "file": "dist/assets/textures/f011_head_color.png",
+    "size": 8229910,
+    "sha256": "14aabb7121d1526abb47f19055b400287dff21ab54a643816373d988e805fdb0"
+  },
+  {
+    "file": "dist/assets/textures/m011_body_color.png",
+    "size": 1646750,
+    "sha256": "9b6b8b33a00cd3df4009fe9ad485f2557029d271a758dbde30aa73c27a254aae"
+  },
+  {
+    "file": "dist/assets/textures/f011_head_normal.png",
+    "size": 1718824,
+    "sha256": "6d33b7b0877cce12973996d0d93c8a3ee7d50eaa137b25af2ac003707ff4ff21"
+  },
+  {
+    "file": "dist/assets/textures/f011_opacity_color.png",
+    "size": 1111908,
+    "sha256": "1eb0658c0fac8fb14acc13838254cd01c8a5893f2cc02a07b97fd8e369695e5b"
+  },
+  {
+    "file": "dist/assets/textures/m011_body_specular.png",
+    "size": 303498,
+    "sha256": "5e66c20d0bcec03ce3f7991164adce0fa31f033eaedc9064bbf501aaf73a6e0b"
+  },
+  {
+    "file": "dist/assets/textures/m011_head_specular.png",
+    "size": 512141,
+    "sha256": "cb28eea3f05fe6e44355d7a16c1fce0e509654873fe877be5d938de53f98d348"
+  },
+  {
+    "file": "dist/assets/textures/m011_body_normal.png",
+    "size": 1583692,
+    "sha256": "81219919eba7a497c20985d301bc37643508749d8c38d29f9829f1a20f9d9441"
+  },
+  {
+    "file": "dist/assets/textures/m011_head_color.png",
+    "size": 6879067,
+    "sha256": "5276cbad335db9d66eef73d744efe384d54a745e47ed6c36052c261f044c692f"
+  },
+  {
+    "file": "dist/assets/textures/m011_opacity_color.png",
+    "size": 2134293,
+    "sha256": "9e495ba5c5d97376d7527b24ecdcd9b88bbece0550d682d3e103d59c61e69008"
+  },
+  {
+    "file": "dist/assets/textures/m011_head_normal.png",
+    "size": 1414500,
+    "sha256": "980e48b6bb7ae1672ca97aa9c0b9eeb669c34e562762fb2005deb938e4f719f0"
+  },
+  {
+    "file": "dist/assets/textures/f008_body_specular.png",
+    "size": 471639,
+    "sha256": "ba1e6b85cfa0b6c360cd34753a9c18d6aecddcae21a31061b62204dfce03d390"
+  },
+  {
+    "file": "dist/assets/textures/f008_body_normal.png",
+    "size": 1432749,
+    "sha256": "f51a84a69b5cc00a9843a502101a2761b737a33a3dda10afbfed582206193932"
+  },
+  {
+    "file": "dist/assets/textures/f008_body_color.png",
+    "size": 1665570,
+    "sha256": "bd6bd865eb35177ae694713fa442f3cbf957c032b42db80546d794f31a92e169"
+  },
+  {
+    "file": "dist/assets/textures/f008_head_normal.png",
+    "size": 1593771,
+    "sha256": "92eeb61ed0c4c165888a2695b2a859bc5840d716d138915fc01655abc38b0b4d"
+  },
+  {
+    "file": "dist/assets/textures/f008_head_specular.png",
+    "size": 689404,
+    "sha256": "6fffccb6687d5283d7389ca16aee738e1e304ccc381ab138576dd6355829f59e"
+  },
+  {
+    "file": "dist/assets/textures/f008_opacity_color.png",
+    "size": 1509032,
+    "sha256": "4246ea8b7bdd3ea35c44cb6074fb3c8cfa0e9b4217a8345c01573e3486a5cb1d"
+  },
+  {
+    "file": "dist/assets/textures/f008_head_color.png",
+    "size": 7678542,
+    "sha256": "32053821c65cfef021b1c4e06a91ecbe7a1b1bf150db57550e618ea1b3b244f5"
+  },
+  {
+    "file": "dist/assets/textures/m006_body_color.png",
+    "size": 1552806,
+    "sha256": "24a1664af6f1afc2975d7b68f5c0bf0deda1e27f18ed2d201a901b3deb10850f"
+  },
+  {
+    "file": "dist/assets/textures/m006_body_normal.png",
+    "size": 1833432,
+    "sha256": "5c3f392e0819a9ba24bebb6c96e29ab3229d84fa5f096fa78d4f257de4e414fd"
+  },
+  {
+    "file": "dist/assets/textures/m006_body_specular.png",
+    "size": 345069,
+    "sha256": "45c83665e1457ef91d241aaef99289d2f130acf7c222585e24ac0f25d50fd6f8"
+  },
+  {
+    "file": "dist/assets/textures/m006_head_specular.png",
+    "size": 632380,
+    "sha256": "f803802632e37bea944af02c06b89ef8b918fba66cab76c30a20dae487ffd090"
+  },
+  {
+    "file": "dist/assets/textures/m006_head_color.png",
+    "size": 6815300,
+    "sha256": "79d3d981a93819b3c905118dd547d2e46a519d46862f42e2573cc25fae7075c8"
+  },
+  {
+    "file": "dist/assets/textures/m006_head_normal.png",
+    "size": 1366045,
+    "sha256": "15482a667a7923ab594e1fd797fe6ddceffdfc4e47be263bb310f9a0f6bf1013"
+  },
+  {
+    "file": "dist/assets/textures/m006_opacity_color.png",
+    "size": 1617762,
+    "sha256": "eab361bb1dc6e147ca35419a1e10b793d4d0cb6bbd9f7674befd7e32fa3b7294"
+  },
+  {
+    "file": "dist/assets/MICROSOFT-ROCKETBOX-LICENSE.txt",
+    "size": 1066,
+    "sha256": "17474e386e0b9e1a700cc3d06b2b0882a2c376d9c6b49c7f8274409b8f8d2352"
+  },
+  {
+    "file": "dist/assets/provenance.json",
+    "size": 594,
+    "sha256": "92e9ef91753673c80e660dec08c22b8026046b95d085065307ccfe39edfdcd93"
+  },
+  {
+    "file": "dist/assets/validation.json",
+    "size": 1049,
+    "sha256": "a8d989cd04b7d8fd0110dca6d49e99a3da274235335ef8202086e01eca06dd9c"
+  }
+]

@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { ParticleBackground } from './components/ParticleBackground';
-import { AudioPlayer } from './components/AudioPlayer';
 import { HeroScene } from './components/HeroScene';
 import { CalendarScene } from './components/CalendarScene';
-import { GalleryScene } from './components/GalleryScene';
 import { BirthdayCakeScene } from './components/BirthdayCakeScene';
-import { PresentsScene } from './components/PresentsScene';
 import { MemoriesScene } from './components/MemoriesScene';
 import { TheFeelingScene } from './components/TheFeelingScene';
 import { LetterScene } from './components/LetterScene';
@@ -83,9 +80,6 @@ export function App() {
       {/* Dynamic Golden Particle Field & Stardust */}
       <ParticleBackground />
 
-      {/* Seamless Background Audio (No visible display) */}
-      <AudioPlayer />
-
       {/* Main Continuous Journey */}
       <main className="relative z-10">
         {/* Scenes 1 & 2: Opening + Countdown + Secret Passcode Gate (Code: 301206) */}
@@ -103,19 +97,9 @@ export function App() {
               <CalendarScene />
             </ScrollReveal>
 
-            {/* Scene 4: Photo Memory Gallery */}
-            <ScrollReveal direction="up" delay={150}>
-              <GalleryScene onOpenLightbox={handleOpenLightbox} />
-            </ScrollReveal>
-
-            {/* Scene 5: Interactive Birthday Cake Celebration (Candles, Cake Cutting & Wishes) */}
+            {/* Interactive Birthday Cake Celebration (3D Hall & Cake Cutting) */}
             <ScrollReveal direction="up" delay={150}>
               <BirthdayCakeScene />
-            </ScrollReveal>
-
-            {/* Scene 7: Surprise Presents & Favors (Bracelet, Nail Polish, Mehendi) */}
-            <ScrollReveal direction="up" delay={150}>
-              <PresentsScene onOpenLightbox={handleOpenLightbox} />
             </ScrollReveal>
 
             {/* Scene 8: Our Memories */}

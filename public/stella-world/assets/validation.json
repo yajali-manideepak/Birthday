@@ -1,0 +1,62 @@
+[
+  {
+    "id": "female",
+    "bones": 81,
+    "skinned": 1,
+    "invalid": 0,
+    "dimensions": [
+      121.73172202874508,
+      173.64207739429585,
+      37.431009585175474
+    ],
+    "armNames": [
+      "Bip01_L_UpperArm",
+      "Bip01_R_UpperArm"
+    ]
+  },
+  {
+    "id": "male",
+    "bones": 81,
+    "skinned": 1,
+    "invalid": 0,
+    "dimensions": [
+      134.8228197439492,
+      183.13217306495466,
+      34.04365762019609
+    ],
+    "armNames": [
+      "Bip01_L_UpperArm",
+      "Bip01_R_UpperArm"
+    ]
+  },
+  {
+    "id": "guest-female",
+    "bones": 81,
+    "skinned": 1,
+    "invalid": 0,
+    "dimensions": [
+      121.72409096552829,
+      173.49161448840235,
+      36.161121720063626
+    ],
+    "armNames": [
+      "Bip01_R_UpperArm",
+      "Bip01_L_UpperArm"
+    ]
+  },
+  {
+    "id": "guest-male",
+    "bones": 81,
+    "skinned": 1,
+    "invalid": 0,
+    "dimensions": [
+      134.8228131702978,
+      186.8575541021295,
+      34.40979646564107
+    ],
+    "armNames": [
+      "Bip01_R_UpperArm",
+      "Bip01_L_UpperArm"
+    ]
+  }
+]

@@ -61,10 +61,6 @@ export const PHOTO_CONFIG = {
   // Birthday Cake & Celebration Assets
   cakePhoto: '/assets/photos/stella-birthday-cake.jpg',
 
-  // Audio track configuration
-  // Place your MP3 file at: /public/assets/birthday-music.mp3
-  audioSrc: '/assets/birthday-music.mp3',
-
   // Stella's details
   name: 'STELLA',
   instagram: '@miss_photophile30',

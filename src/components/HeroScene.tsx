@@ -3,7 +3,6 @@ import { Heart } from 'lucide-react';
 import { PHOTO_CONFIG } from '../config/photos';
 import { InstagramIcon } from './InstagramIcon';
 import { SecretLock } from './SecretLock';
-import { BirthdayBalloonCanvas } from './BirthdayBalloonCanvas';
 
 interface CountdownTime {
   days: number;
@@ -169,19 +168,6 @@ export const HeroScene: React.FC<HeroSceneProps> = ({
           ========================================================================= */}
       {isUnlocked && (
         <div id="birthday-reveal" className="flex flex-col items-center mt-12 sm:mt-16 w-full max-w-5xl animate-fade-in">
-          {/* Fireworks & Balloon Animation for HAPPY BIRTHDAY STELLA */}
-          <div className="w-full mb-8">
-            <BirthdayBalloonCanvas
-              onScrollToNext={() => {
-                const el = document.getElementById('portrait-section');
-                if (el) {
-                  el.scrollIntoView({ behavior: 'smooth' });
-                } else {
-                  onExploreSurprise();
-                }
-              }}
-            />
-          </div>
 
           <div id="portrait-section" className="flex flex-col items-center max-w-3xl w-full">
             <div className="w-16 h-1 bg-gradient-to-r from-transparent via-gold-400 to-transparent my-6" />
